@@ -3,27 +3,38 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { TechItem } from "@/data/profile";
+import { techIcons } from "./TechIcons";
 
-const accentStyles: Record<string, { glow: string; bar: string; text: string }> = {
+const accentStyles: Record<string, { glow: string; bar: string; text: string; iconBg: string }> = {
   frontend: {
-    glow: "group-hover:shadow-glow-violet group-hover:border-signal-violet/50",
-    bar: "from-signal-violet to-signal-violet-light",
-    text: "group-hover:text-signal-violet-light",
+    glow:   "group-hover:shadow-glow-violet group-hover:border-signal-violet/50",
+    bar:    "from-signal-violet to-signal-violet-light",
+    text:   "group-hover:text-signal-violet-light",
+    iconBg: "bg-signal-violet/10 group-hover:bg-signal-violet/20",
   },
   backend: {
-    glow: "group-hover:shadow-glow-cyan group-hover:border-signal-cyan/50",
-    bar: "from-signal-cyan to-signal-cyan",
-    text: "group-hover:text-signal-cyan",
+    glow:   "group-hover:shadow-glow-cyan group-hover:border-signal-cyan/50",
+    bar:    "from-signal-cyan to-signal-cyan",
+    text:   "group-hover:text-signal-cyan",
+    iconBg: "bg-signal-cyan/10 group-hover:bg-signal-cyan/20",
   },
   tools: {
-    glow: "group-hover:shadow-glow-crimson group-hover:border-signal-crimson/50",
-    bar: "from-signal-crimson to-signal-crimson",
-    text: "group-hover:text-signal-crimson",
+    glow:   "group-hover:shadow-glow-crimson group-hover:border-signal-crimson/50",
+    bar:    "from-signal-crimson to-signal-crimson",
+    text:   "group-hover:text-signal-crimson",
+    iconBg: "bg-signal-crimson/10 group-hover:bg-signal-crimson/20",
   },
+};
+
+const iconColor: Record<string, string> = {
+  frontend: "text-signal-violet-light",
+  backend:  "text-signal-cyan",
+  tools:    "text-signal-crimson",
 };
 
 export function TechCard({ item, index }: { item: TechItem; index: number }) {
   const accent = accentStyles[item.category];
+  const Icon   = techIcons[item.icon];
 
   return (
     <motion.div
@@ -37,21 +48,31 @@ export function TechCard({ item, index }: { item: TechItem; index: number }) {
         accent.glow
       )}
     >
+      {/* top row: icon + index */}
       <div className="flex items-center justify-between">
-        <span
-          className={cn(
-            "font-display text-base font-semibold text-ink transition-colors duration-300",
-            accent.text
+        <div className={cn(
+          "flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-300",
+          accent.iconBg
+        )}>
+          {Icon && (
+            <Icon className={cn("h-5 w-5 transition-colors duration-300", iconColor[item.category])} />
           )}
-        >
-          {item.name}
-        </span>
+        </div>
         <span className="font-mono text-[10px] text-ink-faint">
           {String(index + 1).padStart(2, "0")}
         </span>
       </div>
 
-      <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-panel-border/60">
+      {/* name */}
+      <div className={cn(
+        "mt-3 font-display text-sm font-semibold text-ink transition-colors duration-300 sm:text-base",
+        accent.text
+      )}>
+        {item.name}
+      </div>
+
+      {/* proficiency bar */}
+      <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-panel-border/60">
         <motion.div
           className={cn("h-full rounded-full bg-gradient-to-r", accent.bar)}
           initial={{ width: 0 }}
@@ -62,7 +83,7 @@ export function TechCard({ item, index }: { item: TechItem; index: number }) {
       </div>
 
       <span className="mt-2 block font-mono text-[10px] uppercase tracking-[0.15em] text-ink-faint">
-        Proficiency {item.level}%
+        {item.level}%
       </span>
     </motion.div>
   );

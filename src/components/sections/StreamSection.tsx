@@ -1,10 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Youtube, Radio, Users, PlayCircle } from "lucide-react";
+import { Youtube, Radio, Users } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionTag } from "@/components/ui/SectionTag";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { YouTubeEmbed } from "./YouTubeEmbed";
 import { channelStats } from "@/data/profile";
 
 export function StreamSection() {
@@ -36,7 +37,7 @@ export function StreamSection() {
             </div>
 
             <div className="relative grid grid-cols-1 lg:grid-cols-[1fr_1px_0.85fr]">
-              {/* left: brand block */}
+              {/* ── Left: brand block ── */}
               <div className="p-8 sm:p-12">
                 <div className="flex items-center gap-3">
                   <span className="flex h-2.5 w-2.5 items-center justify-center">
@@ -66,53 +67,41 @@ export function StreamSection() {
                 </div>
 
                 <div className="mt-10 grid grid-cols-2 gap-4 border-t border-panel-border pt-6 sm:grid-cols-4">
-                 {channelStats.map((stat, index) => (
-              <div key={index}>
-                <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-faint">
-                  {stat.label}
-                </div>
-                <div className="mt-1.5 font-display text-sm font-semibold text-ink sm:text-base">
-                  {stat.link ? (
-                    <a 
-                      href={stat.link} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="hover:underline text-inherit transition-colors"
-                    >
-                      {stat.value}
-                    </a>
-                  ) : (
-                    stat.value
-                  )}
-                </div>
-              </div>
-            ))}
+                  {channelStats.map((stat, index) => (
+                    <div key={index}>
+                      <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-faint">
+                        {stat.label}
+                      </div>
+                      <div className={`mt-1.5 font-display text-sm font-semibold sm:text-base ${
+                        stat.value === "ON AIR"
+                          ? "text-signal-crimson"
+                          : "text-ink"
+                      }`}>
+                        {"link" in stat && stat.link ? (
+                          <a
+                            href={stat.link as string}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-signal-cyan transition-colors"
+                          >
+                            {stat.value}
+                          </a>
+                        ) : (
+                          stat.value
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
               <div className="hidden bg-panel-border lg:block" />
 
-              {/* right: preview panel */}
+              {/* ── Right: smart YouTube embed ── */}
               <div className="relative flex flex-col justify-center gap-5 border-t border-panel-border p-8 sm:p-12 lg:border-t-0">
-                <div className="bracket-frame relative flex aspect-video items-center justify-center overflow-hidden rounded-xl border border-panel-border bg-void">
-                  <div className="absolute inset-0 bg-grid-pattern bg-grid opacity-40" />
-                  <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-md bg-signal-crimson/90 px-2 py-1">
-                    <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                    <span className="font-mono text-[10px] font-medium uppercase tracking-wider text-white">
-                      Live
-                    </span>
-                  </div>
-                  <motion.div
-                    whileHover={{ scale: 1.08 }}
-                    transition={{ duration: 0.3 }}
-                    className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-ink/95 text-void shadow-glow-crimson"
-                  >
-                    <PlayCircle size={30} strokeWidth={1.5} />
-                  </motion.div>
-                  <span className="absolute bottom-3 right-3 font-mono text-[10px] uppercase tracking-wider text-ink-faint">
-                    mrflexy
-                  </span>
-                </div>
+
+                {/* Smart embed: LIVE if streaming, latest video otherwise */}
+                <YouTubeEmbed />
 
                 <div className="flex items-center gap-4 rounded-xl border border-panel-border bg-void/60 p-4">
                   <Radio size={18} className="shrink-0 text-signal-cyan" />

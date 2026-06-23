@@ -66,25 +66,26 @@ export const socials = [
 export type TechItem = {
   name: string;
   category: "frontend" | "backend" | "tools";
-  level: number; // 0-100, used for the HUD meter
+  level: number; 
+  icon?: string;
 };
 
 export const techStack: TechItem[] = [
-  { name: "React", category: "frontend", level: 98 },
-  { name: "Next.js", category: "frontend", level: 95 },
-  { name: "Tailwind CSS", category: "frontend", level: 94 },
-  { name: "JavaScript", category: "frontend", level: 96 },
-  { name: "TypeScript", category: "frontend", level: 88 },
-  { name: "Three.js", category: "frontend", level: 80 },
-  { name: "Python", category: "backend", level: 40 },
-  { name: "Node.js", category: "backend", level: 90 },
-  { name: "Express.js", category: "backend", level: 87 },
-  { name: "MongoDB", category: "backend", level: 95 },
-  { name: "Git", category: "tools", level: 93 },
-  { name: "GitHub", category: "tools", level: 93 },
-  { name: "Docker", category: "tools", level: 78 },
-  { name: "Cloudflare", category: "tools", level: 75 },
-];
+{ name: "React",       category: "frontend", level: 95, icon: "react"      },
+{ name: "Next.js",     category: "frontend", level: 92, icon: "nextjs"     },
+{ name: "Tailwind",    category: "frontend", level: 94, icon: "tailwind"   },
+{ name: "JavaScript",  category: "frontend", level: 96, icon: "javascript" },
+{ name: "TypeScript",  category: "frontend", level: 88, icon: "typescript" },
+{ name: "Three.js",    category: "frontend", level: 80, icon: "threejs"    },
+{ name: "Node.js",     category: "backend",  level: 90, icon: "nodejs"     },
+{ name: "Express.js",  category: "backend",  level: 87, icon: "express"    },
+{ name: "Python",      category: "backend",  level: 40, icon: "python"     },
+{ name: "MongoDB",     category: "backend",  level: 85, icon: "mongodb"    },
+{ name: "Git",         category: "tools",    level: 93, icon: "git"        },
+{ name: "GitHub",      category: "tools",    level: 93, icon: "github"     },
+{ name: "Docker",      category: "tools",    level: 78, icon: "docker"     },
+{ name: "Cloudflare",  category: "tools",    level: 75, icon: "cloudflare" },
+]
 
 export const techCategories = [
   {
