@@ -39,16 +39,6 @@ export const metadata: Metadata = {
     "Game Streamer Sri Lanka",
   ],
   authors: [{ name: "Sithija Kalhara" }],
-  
-  // ─── ICON CONFIGURATION ───────────────────────────────────────
-  // favicon එක public folder එකේ තියෙන නිසා path එක කෙලින්ම "/favicon.ico" දෙන්න
-  icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-    ],
-  },
-  // ──────────────────────────────────────────────────────────────
-
   openGraph: {
     title: "Sithija Kalhara — Full-Stack Developer & Streamer",
     description:

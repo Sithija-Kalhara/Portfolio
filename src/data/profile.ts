@@ -1,5 +1,3 @@
-import { label } from "framer-motion/client";
-
 export const profile = {
   name: "Sithija Kalhara",
   alias: "Mr. Flexy",
@@ -7,7 +5,7 @@ export const profile = {
     "Full-Stack Developer",
     "Game Live Streamer",
     "AI Data Analyst",
-    "Founder & CEO @ Eyerone",
+    "Founder, Eyerone",
   ],
   bio: "I'm a passionate Full-Stack Developer and AI enthusiast building modern digital experiences. As the Founder of Eyerone, I focus on creating scalable platforms, interactive 3D applications, and innovative tech-driven solutions. I specialize in React, Next.js, Node.js, and Three.js, combining clean architecture with high-performance design. Beyond coding, I'm deeply involved in gaming technology, real-time systems, and creative media production.",
   mission:
@@ -66,26 +64,26 @@ export const socials = [
 export type TechItem = {
   name: string;
   category: "frontend" | "backend" | "tools";
-  level: number; 
-  icon?: string;
+  level: number; // 0-100, used for the HUD meter
+  icon: string;  // key into techIcons map
 };
 
 export const techStack: TechItem[] = [
-{ name: "React",       category: "frontend", level: 95, icon: "react"      },
-{ name: "Next.js",     category: "frontend", level: 92, icon: "nextjs"     },
-{ name: "Tailwind",    category: "frontend", level: 94, icon: "tailwind"   },
-{ name: "JavaScript",  category: "frontend", level: 96, icon: "javascript" },
-{ name: "TypeScript",  category: "frontend", level: 88, icon: "typescript" },
-{ name: "Three.js",    category: "frontend", level: 80, icon: "threejs"    },
-{ name: "Node.js",     category: "backend",  level: 90, icon: "nodejs"     },
-{ name: "Express.js",  category: "backend",  level: 87, icon: "express"    },
-{ name: "Python",      category: "backend",  level: 40, icon: "python"     },
-{ name: "MongoDB",     category: "backend",  level: 85, icon: "mongodb"    },
-{ name: "Git",         category: "tools",    level: 93, icon: "git"        },
-{ name: "GitHub",      category: "tools",    level: 93, icon: "github"     },
-{ name: "Docker",      category: "tools",    level: 78, icon: "docker"     },
-{ name: "Cloudflare",  category: "tools",    level: 75, icon: "cloudflare" },
-]
+  { name: "React",       category: "frontend", level: 95, icon: "react"      },
+  { name: "Next.js",     category: "frontend", level: 92, icon: "nextjs"     },
+  { name: "Tailwind",    category: "frontend", level: 94, icon: "tailwind"   },
+  { name: "JavaScript",  category: "frontend", level: 96, icon: "javascript" },
+  { name: "TypeScript",  category: "frontend", level: 88, icon: "typescript" },
+  { name: "Three.js",    category: "frontend", level: 80, icon: "threejs"    },
+  { name: "Node.js",     category: "backend",  level: 90, icon: "nodejs"     },
+  { name: "Express.js",  category: "backend",  level: 87, icon: "express"    },
+  { name: "Python",      category: "backend",  level: 40, icon: "python"     },
+  { name: "MongoDB",     category: "backend",  level: 85, icon: "mongodb"    },
+  { name: "Git",         category: "tools",    level: 93, icon: "git"        },
+  { name: "GitHub",      category: "tools",    level: 93, icon: "github"     },
+  { name: "Docker",      category: "tools",    level: 78, icon: "docker"     },
+  { name: "Cloudflare",  category: "tools",    level: 75, icon: "cloudflare" },
+];
 
 export const techCategories = [
   {
@@ -143,42 +141,8 @@ export const stats = [
 ] as const;
 
 export const channelStats = [
-  { 
-    label: "Platform", 
-    value: "YouTube", 
-    link: "https://www.youtube.com/@mrflexy1" 
-  },
-  { 
-    label: "Username", 
-    value: "@mrflexy1", 
-    link: "https://www.youtube.com/@mrflexy1" 
-  },
-  { label: "Content", value: "Live Stream & Gaming Video Create" },
-  { label: "Status", value: "ON AIR" },
-
-  { 
-    label: "Platform", 
-    value: "Facebook", 
-    link: "https://www.facebook.com/mrflexy2" 
-  },
-  { 
-    label: "Username", 
-    value: "@mrflexy2", 
-    link: "https://www.facebook.com/mrflexy2" 
-  },
-  { label: "Content", value: "Live Stream & Gaming Video Create" },
-  { label: "Status", value: "ON AIR" },
-
-  { 
-    label: "Platform", 
-    value: "TikTok", 
-    link: "https://www.tiktok.com/@mr._.flexy" 
-  },
-  { 
-    label: "Username", 
-    value: "@mr._.flexy", 
-    link: "https://www.tiktok.com/@mr._.flexy" 
-  },
-  { label: "Content", value: "Live Stream & Gaming Video Create" },
+  { label: "Platform", value: "YouTube" },
+  { label: "Handle", value: "@mrflexy1" },
+  { label: "Content", value: "Live Gameplay & Dev Streams" },
   { label: "Status", value: "ON AIR" },
 ] as const;
