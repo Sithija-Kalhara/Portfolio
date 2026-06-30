@@ -34,7 +34,8 @@ const iconColor: Record<string, string> = {
 
 export function TechCard({ item, index }: { item: TechItem; index: number }) {
   const accent = accentStyles[item.category];
-const Icon = techIcons[item.icon as keyof typeof techIcons];
+  const Icon   = (techIcons as Record<string, (props: { className?: string }) => JSX.Element>)[item.icon];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 18 }}

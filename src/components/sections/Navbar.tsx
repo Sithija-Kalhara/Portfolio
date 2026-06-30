@@ -39,7 +39,7 @@ export function Navbar() {
             SK
           </span>
           <span className="font-mono text-[13px] uppercase tracking-[0.2em] text-ink-dim transition-colors group-hover:text-ink">
-            Sithija<span className="text-signal-violet-light">.</span>dev
+            Sithija<span className="text-signal-violet-light">.</span>com
           </span>
         </a>
 
