@@ -106,16 +106,7 @@ export function Hero() {
             <HeroSceneCanvas />
           </div>
           <div className="absolute left-1/2 top-1/2 h-[1px] w-[1px]">
-            <span className="absolute -left-12 -top-32 hidden font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint sm:block">
-              render.engine
-              <br />
-              three.js / r3f
-            </span>
-            <span className="absolute -right-16 bottom-[-160px] hidden font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint sm:block">
-              particles: 2,600
-              <br />
-              status: live
-            </span>
+           
           </div>
         </div>
       </div>
