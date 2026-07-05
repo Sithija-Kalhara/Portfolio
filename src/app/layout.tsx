@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
-import { StructuredData } from "@/components/seo/StructuredData";
 import "./globals.css";
 
 const display = Space_Grotesk({
@@ -9,14 +8,12 @@ const display = Space_Grotesk({
   variable: "--font-display",
   display: "swap",
 });
-
 const body = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-body",
   display: "swap",
 });
-
 const mono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
@@ -24,79 +21,113 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
+// ── Canonical domain ──────────────────────────────────────────────────────────
+const BASE_URL = "https://www.sithijakalhara.com";
+
+// ── Full name repeated in every signal Google uses ───────────────────────────
 export const metadata: Metadata = {
-  metadataBase: new URL("https://sithijakalhara.com"),
+  metadataBase: new URL(BASE_URL),
+
+  // Title eke full name boldly — "Sithija Kalhara" as the primary signal
   title: {
-    default: "Sithija Kalhara — Full-Stack Developer & Streamer",
-    template: "%s — Sithija Kalhara",
+    default: "Sithija Kalhara | Full-Stack Developer, AI Analyst & Game Streamer",
+    template: "%s | Sithija Kalhara",
   },
+
   description:
-    "Full-Stack Developer, Founder of Eyerone, AI Data Analyst, and Gaming Content Creator (Mr. Flexy). Building scalable platforms and interactive 3D experiences with React, Next.js, and Three.js.",
+    "Sithija Kalhara — Full-Stack Developer, Founder of Eyerone, AI Data Analyst, and Gaming Content Creator (Mr. Flexy). Based in Sri Lanka, specialising in React, Next.js, Node.js, Three.js, and scalable web platforms.",
+
   keywords: [
     "Sithija Kalhara",
-    "Full-Stack Developer",
-    "Eyerone",
-    "Mr. Flexy",
-    "Next.js Developer",
-    "Three.js",
-    "AI Data Analyst",
+    "Sithija Kalhara developer",
+    "Sithija Kalhara Sri Lanka",
+    "Sithija Kalhara portfolio",
+    "Sithija Kalhara Eyerone",
+    "Sithija Kalhara Mr Flexy",
+    "sithijakalhara.com",
+    "Full-Stack Developer Sri Lanka",
+    "Next.js developer Sri Lanka",
+    "Three.js developer",
+    "AI Data Analyst Sri Lanka",
     "Game Streamer Sri Lanka",
-    "React Developer Sri Lanka",
-    "Web Developer Sri Lanka",
+    "Mr Flexy YouTube",
+    "Eyerone founder",
+    "React developer Sri Lanka",
   ],
-  authors: [{ name: "Sithija Kalhara", url: "https://sithijakalhara.com" }],
+
+  authors: [{ name: "Sithija Kalhara", url: BASE_URL }],
   creator: "Sithija Kalhara",
   publisher: "Sithija Kalhara",
-  alternates: {
-    canonical: "https://sithijakalhara.com",
-  },
+  generator: "Next.js",
+  applicationName: "Sithija Kalhara Portfolio",
+  referrer: "origin-when-cross-origin",
+  category: "technology",
+
+  // ── Open Graph ─────────────────────────────────────────────────────────────
   openGraph: {
-    title: "Sithija Kalhara — Full-Stack Developer & Streamer",
+    type: "profile",
+    firstName: "Sithija",
+    lastName: "Kalhara",
+    username: "sithijakalhara",
+    gender: "male",
+    title: "Sithija Kalhara | Full-Stack Developer & Game Streamer",
     description:
-      "Founder of Eyerone. Building scalable platforms, interactive 3D apps, and high-performance systems — by day a developer, by night Mr. Flexy.",
-    url: "https://sithijakalhara.com",
+      "Sithija Kalhara — Full-Stack Developer, Founder of Eyerone, AI Data Analyst, and Gaming Content Creator. Building scalable platforms and interactive 3D experiences.",
+    url: BASE_URL,
     siteName: "Sithija Kalhara",
-    type: "website",
     locale: "en_US",
     images: [
       {
-        url: "/opengraph-image",
+        url: `${BASE_URL}/opengraph-image`,
         width: 1200,
         height: 630,
-        alt: "Sithija Kalhara — Full-Stack Developer & Streamer",
+        alt: "Sithija Kalhara — Full-Stack Developer, AI Analyst & Game Streamer",
       },
     ],
   },
+
+  // ── Twitter / X ────────────────────────────────────────────────────────────
   twitter: {
     card: "summary_large_image",
-    title: "Sithija Kalhara — Full-Stack Developer & Streamer",
+    title: "Sithija Kalhara | Full-Stack Developer & Game Streamer",
     description:
-      "Founder of Eyerone. Full-Stack Developer, AI Data Analyst, Gaming Content Creator.",
-    images: ["/opengraph-image"],
+      "Full-Stack Developer, Founder of Eyerone, AI Data Analyst, Gaming Content Creator (Mr. Flexy). Based in Sri Lanka.",
+    images: [`${BASE_URL}/opengraph-image`],
+    creator: "@sithijakalhara",
   },
+
+  // ── Canonical URL ──────────────────────────────────────────────────────────
+  alternates: {
+    canonical: BASE_URL,
+  },
+
+  // ── Icons ──────────────────────────────────────────────────────────────────
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-192.png",  sizes: "192x192", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/manifest.json",
+
+  // ── Robots ────────────────────────────────────────────────────────────────
   robots: {
     index: true,
     follow: true,
     googleBot: {
       index: true,
       follow: true,
+      "max-video-preview": -1,
       "max-image-preview": "large",
       "max-snippet": -1,
     },
   },
-  icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
-    ],
-    shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
-  },
-  manifest: "/manifest.json",
-  category: "technology",
-  // Uncomment and paste your real code after verifying ownership in
-  // Google Search Console → Settings → Ownership verification → HTML tag.
+
+  // ── Google Search Console verification ───────────────────────────────────
+  // Uncomment after verifying in Search Console → Settings → Ownership → HTML tag
   // verification: {
   //   google: "YOUR_GOOGLE_VERIFICATION_CODE",
   // },
@@ -116,7 +147,6 @@ export default function RootLayout({
       <body
         className={`${display.variable} ${body.variable} ${mono.variable} font-body antialiased bg-void text-ink`}
       >
-        <StructuredData />
         {children}
       </body>
     </html>
