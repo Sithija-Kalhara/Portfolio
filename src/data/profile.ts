@@ -82,7 +82,7 @@ export const techStack: TechItem[] = [
   { name: "Git",         category: "tools",    level: 93, icon: "git"        },
   { name: "GitHub",      category: "tools",    level: 93, icon: "github"     },
   { name: "Docker",      category: "tools",    level: 78, icon: "docker"     },
-  { name: "Cloudflare",  category: "tools",    level: 75, icon: "cloudflare" },
+  { name: "Cloudflare",  category: "tools",    level: 82, icon: "cloudflare" },
 ];
 
 export const techCategories = [
