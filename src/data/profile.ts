@@ -70,14 +70,14 @@ export type TechItem = {
 
 export const techStack: TechItem[] = [
   { name: "React",       category: "frontend", level: 95, icon: "react"      },
-  { name: "Next.js",     category: "frontend", level: 92, icon: "nextjs"     },
+  { name: "Next.js",     category: "frontend", level: 95, icon: "nextjs"     },
   { name: "Tailwind",    category: "frontend", level: 94, icon: "tailwind"   },
   { name: "JavaScript",  category: "frontend", level: 96, icon: "javascript" },
   { name: "TypeScript",  category: "frontend", level: 88, icon: "typescript" },
   { name: "Three.js",    category: "frontend", level: 80, icon: "threejs"    },
   { name: "Node.js",     category: "backend",  level: 90, icon: "nodejs"     },
   { name: "Express.js",  category: "backend",  level: 87, icon: "express"    },
-  { name: "Python",      category: "backend",  level: 40, icon: "python"     },
+  { name: "Python",      category: "backend",  level: 75, icon: "python"     },
   { name: "MongoDB",     category: "backend",  level: 85, icon: "mongodb"    },
   { name: "Git",         category: "tools",    level: 93, icon: "git"        },
   { name: "GitHub",      category: "tools",    level: 93, icon: "github"     },
