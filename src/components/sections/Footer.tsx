@@ -33,9 +33,6 @@ export function Footer() {
           © {new Date().getFullYear()} {profile.name}. All systems
           operational.
         </p>
-        <p className="font-mono text-xs text-ink-faint">
-          Built with Next.js · Three.js · Framer Motion
-        </p>
       </div>
     </footer>
   );
