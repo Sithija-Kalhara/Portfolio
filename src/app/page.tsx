@@ -2,7 +2,10 @@ import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
 import { TechGrid } from "@/components/sections/TechGrid";
+import { Projects } from "@/components/sections/Projects";
+import { Experience } from "@/components/sections/Experience";
 import { Focus } from "@/components/sections/Focus";
+import { GitHubStats } from "@/components/sections/GitHubStats";
 import { StreamSection } from "@/components/sections/StreamSection";
 import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/sections/Footer";
@@ -20,12 +23,14 @@ export default function Home() {
         <Hero />
         <About />
         <TechGrid />
+        <Projects />
+        <Experience />
         <Focus />
+        <GitHubStats />
         <StreamSection />
         <Contact />
       </main>
       <Footer />
-      {/* NEXUS — AI Assistant (floating, client-side) */}
       <NEXUSChat />
     </>
   );

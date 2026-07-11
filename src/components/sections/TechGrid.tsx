@@ -24,9 +24,6 @@ export function TechGrid() {
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern bg-grid opacity-[0.25] [mask-image:radial-gradient(ellipse_70%_50%_at_50%_0%,black,transparent)]" />
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
-        <Reveal>
-          <SectionTag index="02" label="Tech Stack" accent="cyan" />
-        </Reveal>
 
         <div className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <Reveal delay={0.05}>

@@ -11,9 +11,7 @@ export function Focus() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-panel-border to-transparent" />
 
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <Reveal>
-          <SectionTag index="03" label="Focus Areas" accent="violet" />
-        </Reveal>
+
 
         <Reveal delay={0.05}>
           <h2 className="mt-8 max-w-2xl font-display text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-4xl">

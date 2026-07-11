@@ -70,9 +70,6 @@ export function Contact() {
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern bg-grid opacity-[0.25] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_100%,black,transparent)]" />
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
-        <Reveal>
-          <SectionTag index="05" label="Contact" accent="cyan" />
-        </Reveal>
 
         <Reveal delay={0.05}>
           <h2 className="mt-8 max-w-2xl font-display text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-4xl lg:text-5xl">
