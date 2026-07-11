@@ -52,22 +52,36 @@ UI NAVIGATION — add at end of response when relevant:
 
 function getFallbackResponse(message: string): { text: string; action: string | null } {
   const msg = message.toLowerCase();
+  
   if (msg.includes("project") || msg.includes("eyerone"))
     return { text: "Sithija's flagship project is **Eyerone.com** — a full social media & live streaming platform built solo! HLS streaming, TikTok-style gifts, EyeCoin payments via Stripe, and passkey auth. Legendary build! 🚀", action: "projects" };
+  
   if (msg.includes("skill") || msg.includes("tech") || msg.includes("stack"))
     return { text: "Sithija's stack hits different 🔥 — **React (95%), Next.js (92%), Node.js (90%), TypeScript (88%)**, MongoDB, Three.js, Cloudflare, Docker. Plus AI integrations (Claude, OpenAI, Gemini). Check the skills section!", action: "stack" };
+  
   if (msg.includes("contact") || msg.includes("hire") || msg.includes("freelance") || msg.includes("email") || msg.includes("call") || msg.includes("whatsapp"))
     return { text: "Absolutely! Sithija is open for collaborations, freelance, and AI projects. Hit him up at **sithijakalhara2@gmail.com** or WhatsApp **+94702058956**. Use the buttons below to connect instantly! 📬", action: "contact" };
+  
   if (msg.includes("gaming") || msg.includes("flexy") || msg.includes("stream") || msg.includes("youtube"))
     return { text: "As **Mr. Flexy**, Sithija streams Apex Legends, Free Fire & more on YouTube (@mrflexy1) and TikTok (@mr._.flexy — 2.3K followers!). Bilingual Sinhala+English content. GG! 🎮", action: "stream" };
+  
   if (msg.includes("experience") || msg.includes("education") || msg.includes("chuo") || msg.includes("background"))
     return { text: "Sithija started coding in **2019** (self-taught), founded **Eyerone** in 2023, and is currently studying at **Chuo College of AI** in Japan. From zero to full-stack founder — the ultimate speedrun! 💪", action: "experience" };
+  
   if (msg.includes("github") || msg.includes("stats") || msg.includes("commit"))
     return { text: "Check out Sithija's **GitHub stats** — 108+ contributions this year, 12+ public repos, JavaScript/TypeScript as top languages. Consistent shipper! 📊", action: "stats" };
+  
   if (msg.includes("about") || msg.includes("who") || msg.includes("sithija"))
     return { text: "**Sithija Kalhara** — Full-Stack Developer from Sri Lanka, based in Oyama, Japan. Founder of Eyerone, AI student, and streams as Mr. Flexy. Coding since 2019, building massive things! 💪", action: "about" };
+  
   if (msg.includes("who is nexus") || msg.includes("what is nexus") || msg.includes("who are you") || msg.includes("what are you") || msg.includes("introduce") || msg.includes("nexus"))
     return { text: "I'm **NEXUS** — Sithija Kalhara's personal AI assistant! Think of me as his digital representative. I know everything about his skills, projects, experience, and how to reach him. Ask me anything — from his tech stack to his gaming content as **Mr. Flexy**. I'm here to help! 🤖⚡", action: null };
+
+  // 🔥 MENNA ME DEFAULT RETURN KÄLLA ANTHIMATA ADUVA:
+  return { 
+    text: "I'm not sure about that specifically, but I can tell you about Sithija's projects, tech stack, experience, or how to contact him! What would you like to know? 🤖", 
+    action: null 
+  };
 }
 
 export async function POST(req: NextRequest) {
