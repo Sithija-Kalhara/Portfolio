@@ -252,8 +252,8 @@ export function NEXUSChat() {
                       <Send size={13} />
                     </button>
                   </div>
-              <div className="font-sans text-center md:text-left">
-                <p className="text-[10.5px] tracking-wider text-neutral-500">
+              <div className="w-full flex justify-center items-center font-sans">
+                <p className="text-[10.5px] tracking-wider text-neutral-500 text-center">
                   <span className="font-extrabold tracking-[0.25em] text-white uppercase mr-2">NEXUS</span> 
                   <span className="italic font-light text-neutral-400 text-[10px]">powered by</span>{" "}
                   <span className="font-medium text-neutral-200">Sithija Kalhara</span>
