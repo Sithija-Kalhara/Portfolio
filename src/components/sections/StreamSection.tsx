@@ -1,13 +1,61 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Youtube, Radio, Users } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionTag } from "@/components/ui/SectionTag";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { YouTubeEmbed } from "./YouTubeEmbed";
-import { channelStats } from "@/data/profile";
 
+// ── Static channel info ───────────────────────────────────────────────────────
+const CHANNEL_STATS = [
+  { label: "Platform",  value: "YouTube",    link: "https://www.youtube.com/@mrflexy1" },
+  { label: "Username",  value: "@mrflexy1",  link: "https://www.youtube.com/@mrflexy1" },
+  { label: "TikTok",   value: "@mr._.flexy", link: "https://www.tiktok.com/@mr._.flexy" },
+  { label: "Status",   value: "STATUS",      dynamic: true },
+] as const;
+
+// ── Live status badge ─────────────────────────────────────────────────────────
+function LiveStatusBadge() {
+  const [isLive, setIsLive] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    fetch("/api/youtube")
+      .then((r) => r.json())
+      .then((d) => setIsLive(d.type === "live"))
+      .catch(() => setIsLive(false));
+  }, []);
+
+  if (isLive === null) {
+    return (
+      <span className="font-display text-sm font-semibold text-ink-faint sm:text-base animate-pulse">
+        Checking…
+      </span>
+    );
+  }
+
+  if (isLive) {
+    return (
+      <motion.span
+        animate={{ opacity: [1, 0.5, 1] }}
+        transition={{ duration: 1.4, repeat: Infinity }}
+        className="inline-flex items-center gap-1.5 font-display text-sm font-semibold text-signal-crimson sm:text-base"
+      >
+        <span className="h-2 w-2 rounded-full bg-signal-crimson" />
+        ON AIR
+      </motion.span>
+    );
+  }
+
+  return (
+    <span className="font-display text-sm font-semibold text-ink-faint sm:text-base">
+      OFF AIR
+    </span>
+  );
+}
+
+// ── Main section ──────────────────────────────────────────────────────────────
 export function StreamSection() {
   return (
     <section id="stream" className="relative py-28 lg:py-36">
@@ -64,30 +112,44 @@ export function StreamSection() {
                   >
                     Watch on YouTube
                   </MagneticButton>
+
+                  {/* TikTok button */}
+                  <MagneticButton
+                    href="https://www.tiktok.com/@mr._.flexy"
+                    variant="secondary"
+                    icon={
+                      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
+                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/>
+                      </svg>
+                    }
+                  >
+                    Follow on TikTok
+                  </MagneticButton>
                 </div>
 
+                {/* ── Stats grid ── */}
                 <div className="mt-10 grid grid-cols-2 gap-4 border-t border-panel-border pt-6 sm:grid-cols-4">
-                  {channelStats.map((stat, index) => (
-                    <div key={index}>
+                  {CHANNEL_STATS.map((stat) => (
+                    <div key={stat.label}>
                       <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-ink-faint">
                         {stat.label}
                       </div>
-                      <div className={`mt-1.5 font-display text-sm font-semibold sm:text-base ${
-                        stat.value === "ON AIR"
-                          ? "text-signal-crimson"
-                          : "text-ink"
-                      }`}>
-                        {"link" in stat && stat.link ? (
+                      <div className="mt-1.5">
+                        {"dynamic" in stat && stat.dynamic ? (
+                          <LiveStatusBadge />
+                        ) : "link" in stat && stat.link ? (
                           <a
-                            href={stat.link as string}
+                            href={stat.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-signal-cyan transition-colors"
+                            className="font-display text-sm font-semibold text-ink transition-colors hover:text-signal-cyan sm:text-base"
                           >
                             {stat.value}
                           </a>
                         ) : (
-                          stat.value
+                          <span className="font-display text-sm font-semibold text-ink sm:text-base">
+                            {stat.value}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -97,10 +159,8 @@ export function StreamSection() {
 
               <div className="hidden bg-panel-border lg:block" />
 
-              {/* ── Right: smart YouTube embed ── */}
+              {/* ── Right: YouTube embed ── */}
               <div className="relative flex flex-col justify-center gap-5 border-t border-panel-border p-8 sm:p-12 lg:border-t-0">
-
-                {/* Smart embed: LIVE if streaming, latest video otherwise */}
                 <YouTubeEmbed />
 
                 <div className="flex items-center gap-4 rounded-xl border border-panel-border bg-void/60 p-4">

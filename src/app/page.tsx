@@ -8,11 +8,11 @@ import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { StructuredData } from "@/components/seo/StructuredData";
+import { NEXUSChat } from "@/components/sections/NEXUSChat";
 
 export default function Home() {
   return (
     <>
-      {/* JSON-LD structured data — injected into <head> by Next.js */}
       <StructuredData />
       <ScrollProgress />
       <Navbar />
@@ -25,6 +25,8 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
+      {/* NEXUS — AI Assistant (floating, client-side) */}
+      <NEXUSChat />
     </>
   );
 }
