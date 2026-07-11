@@ -252,9 +252,13 @@ export function NEXUSChat() {
                       <Send size={13} />
                     </button>
                   </div>
-                  <p className="mt-1.5 text-center font-mono text-[9px] text-ink-faint">
-                    Powered by Gemini · NEXUS by Sithija Kalhara
-                  </p>
+              <div className="font-sans text-center md:text-left">
+                <p className="text-[10.5px] tracking-wider text-neutral-500">
+                  <span className="font-extrabold tracking-[0.25em] text-white uppercase mr-2">NEXUS</span> 
+                  <span className="italic font-light text-neutral-400 text-[10px]">powered by</span>{" "}
+                  <span className="font-medium text-neutral-200">Sithija Kalhara</span>
+                </p>
+              </div>
                 </div>
               </>
             )}
