@@ -11,8 +11,8 @@ export const profile = {
   mission:
     "Build powerful systems, push technical boundaries, and turn ambitious ideas into reality.",
   email: "sithijakalhara2@gmail.com",
-  whatsapp: "+94702058956",
-  whatsappLink: "https://wa.me/94702058956",
+  whatsapp: "+94712058956",
+  whatsappLink: "https://wa.me/94712058956",
   location: "Sri Lanka",
 } as const;
 
@@ -47,8 +47,8 @@ export const socials = [
   },
   {
     label: "WhatsApp",
-    handle: "+94 70 205 8956",
-    href: "https://wa.me/94702058956",
+    handle: "+94 71 205 8956",
+    href: "https://wa.me/94712058956",
     icon: "whatsapp",
     color: "violet",
   },

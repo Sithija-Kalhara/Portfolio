@@ -17,7 +17,7 @@ SITHIJA KALHARA — FULL PROFILE DATA:
 - Full name: Sithija Kalhara | Gaming alias: Mr. Flexy
 - Location: Oyama, Tochigi, Japan (originally from Sri Lanka)
 - Portfolio: https://www.sithijakalhara.com
-- Email: sithijakalhara2@gmail.com | WhatsApp: +94702058956
+- Email: sithijakalhara2@gmail.com | WhatsApp: +94712058956
 
 ROLES: Full-Stack Developer, Founder of Eyerone, AI Data Analyst, Gaming Content Creator, UI/UX Designer
 
