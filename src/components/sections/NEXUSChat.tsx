@@ -5,12 +5,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Send, X, Minimize2, Maximize2, Loader2, Phone, Mail, MessageCircle, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Message = {
-  role: "user" | "assistant";
-  content: string;
-  actions?: ContactAction[];
-};
-
 type ContactAction = {
   label: string;
   icon: "phone" | "mail" | "whatsapp" | "link";
@@ -18,11 +12,17 @@ type ContactAction = {
   color: "violet" | "cyan" | "crimson" | "green";
 };
 
+type Message = {
+  role: "user" | "assistant";
+  content: string;
+  actions?: ContactAction[];
+};
+
 const CONTACT_ACTIONS: ContactAction[] = [
-  { label: "Call Now",       icon: "phone",    href: "tel:+94702058956",                              color: "cyan"    },
-  { label: "Send Email",     icon: "mail",     href: "mailto:sithijakalhara2@gmail.com?subject=Project%20Inquiry&body=Hi%20Sithija%2C%20I%20found%20your%20portfolio%20and%20wanted%20to%20connect%20about%20a%20project.", color: "violet"  },
-  { label: "WhatsApp",       icon: "whatsapp", href: "https://wa.me/94702058956?text=Hi%20Sithija!%20I%20found%20your%20portfolio%20and%20wanted%20to%20connect.", color: "green"   },
-  { label: "LinkedIn",       icon: "link",     href: "https://www.linkedin.com/in/sithija-kalhara/",  color: "crimson" },
+  { label: "Call Now",   icon: "phone",    href: "tel:+94712058956",                                                                                                            color: "cyan"    },
+  { label: "Email",      icon: "mail",     href: "mailto:sithijakalhara2@gmail.com?subject=Project%20Inquiry&body=Hi%20Sithija%2C%20I%20found%20your%20portfolio%20and%20wanted%20to%20connect.", color: "violet"  },
+  { label: "WhatsApp",   icon: "whatsapp", href: "https://wa.me/94712058956?text=Hi%20Sithija!%20I%20found%20your%20portfolio%20and%20wanted%20to%20connect.",                  color: "green"   },
+  { label: "LinkedIn",   icon: "link",     href: "https://www.linkedin.com/in/sithija-kalhara/",                                                                                color: "crimson" },
 ];
 
 const SUGGESTED = [
@@ -32,28 +32,27 @@ const SUGGESTED = [
   "Show me his projects",
 ];
 
-// ── Contact action buttons ─────────────────────────────────────────────────────
+// ── Contact action buttons ────────────────────────────────────────────────────
 function ContactButtons({ actions }: { actions: ContactAction[] }) {
   const iconMap = {
-    phone:    <Phone size={13} />,
-    mail:     <Mail size={13} />,
-    whatsapp: <MessageCircle size={13} />,
-    link:     <ExternalLink size={13} />,
+    phone:    <Phone size={12} />,
+    mail:     <Mail size={12} />,
+    whatsapp: <MessageCircle size={12} />,
+    link:     <ExternalLink size={12} />,
   };
   const colorMap = {
-    violet:  "border-signal-violet/50 bg-signal-violet/10 text-signal-violet-light hover:bg-signal-violet/20",
-    cyan:    "border-signal-cyan/50 bg-signal-cyan/10 text-signal-cyan hover:bg-signal-cyan/20",
-    crimson: "border-signal-crimson/50 bg-signal-crimson/10 text-signal-crimson hover:bg-signal-crimson/20",
-    green:   "border-emerald-500/50 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20",
+    violet:  "border-signal-violet/50 bg-signal-violet/10 text-signal-violet-light hover:bg-signal-violet/25",
+    cyan:    "border-signal-cyan/50 bg-signal-cyan/10 text-signal-cyan hover:bg-signal-cyan/25",
+    crimson: "border-signal-crimson/50 bg-signal-crimson/10 text-signal-crimson hover:bg-signal-crimson/25",
+    green:   "border-emerald-500/50 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/25",
   };
-
   return (
     <div className="mt-2 flex flex-wrap gap-1.5">
       {actions.map((a) => (
         <a
           key={a.label}
           href={a.href}
-          target={a.icon !== "phone" && a.icon !== "mail" ? "_blank" : undefined}
+          target={a.icon === "whatsapp" || a.icon === "link" ? "_blank" : undefined}
           rel="noopener noreferrer"
           className={cn(
             "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.12em] transition-all duration-200",
@@ -68,18 +67,18 @@ function ContactButtons({ actions }: { actions: ContactAction[] }) {
   );
 }
 
-// ── Avatar ─────────────────────────────────────────────────────────────────────
-function NexusAvatar({ size = 32, pulse = false }: { size?: number; pulse?: boolean }) {
+// ── NEXUS avatar ──────────────────────────────────────────────────────────────
+function NEXUSAvatar({ size = 32, pulse = false }: { size?: number; pulse?: boolean }) {
   return (
     <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
       <svg viewBox="0 0 40 40" width={size} height={size}>
         <defs>
-          <radialGradient id="nexus-bg-g" cx="50%" cy="50%">
+          <radialGradient id="NEXUS-bg" cx="50%" cy="50%">
             <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.9" />
             <stop offset="100%" stopColor="#0d0d14" stopOpacity="1" />
           </radialGradient>
         </defs>
-        <rect x="8" y="4" width="24" height="26" rx="4" fill="url(#nexus-bg-g)" />
+        <rect x="8" y="4" width="24" height="26" rx="4" fill="url(#NEXUS-bg)" />
         <ellipse cx="15" cy="16" rx="3.5" ry="3.5" fill="#00f0ff" opacity="0.95" />
         <ellipse cx="25" cy="16" rx="3.5" ry="3.5" fill="#00f0ff" opacity="0.95" />
         <ellipse cx="15" cy="16" rx="1.5" ry="1.5" fill="#fff" opacity="0.9" />
@@ -100,7 +99,7 @@ function NexusAvatar({ size = 32, pulse = false }: { size?: number; pulse?: bool
   );
 }
 
-// ── Main Chat ──────────────────────────────────────────────────────────────────
+// ── Main NEXUS Chat ───────────────────────────────────────────────────────────
 export function NEXUSChat() {
   const [open, setOpen]         = useState(false);
   const [minimized, setMin]     = useState(false);
@@ -128,20 +127,13 @@ export function NEXUSChat() {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  // Detect if message is about contact/hire
   function shouldShowContact(userText: string, aiText: string): boolean {
-    const combined = (userText + " " + aiText).toLowerCase();
+    const t = (userText + " " + aiText).toLowerCase();
     return (
-      combined.includes("contact") ||
-      combined.includes("hire") ||
-      combined.includes("email") ||
-      combined.includes("call") ||
-      combined.includes("whatsapp") ||
-      combined.includes("reach") ||
-      combined.includes("freelance") ||
-      combined.includes("work together") ||
-      combined.includes("available") ||
-      combined.includes("phone")
+      t.includes("contact") || t.includes("hire") || t.includes("email") ||
+      t.includes("call") || t.includes("whatsapp") || t.includes("reach") ||
+      t.includes("freelance") || t.includes("work together") ||
+      t.includes("available") || t.includes("phone")
     );
   }
 
@@ -159,17 +151,12 @@ export function NEXUSChat() {
         body: JSON.stringify({ messages: [...messages, userMsg] }),
       });
       const data = await res.json();
-      const reply = data.text ?? "Sorry, I had trouble with that. Try again!";
-
-      // Add contact buttons if topic is contact/hire
+      const reply = data.text ?? "Sorry, I had trouble processing that. Try again!";
       const showContact = shouldShowContact(text, reply);
-      const aiMsg: Message = {
-        role: "assistant",
-        content: reply,
-        actions: showContact ? CONTACT_ACTIONS : undefined,
-      };
-
-      setMessages((prev) => [...prev, aiMsg]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: reply, actions: showContact ? CONTACT_ACTIONS : undefined },
+      ]);
       if (data.action) setTimeout(() => scrollToSection(data.action), 600);
     } catch {
       setMessages((prev) => [
@@ -184,9 +171,7 @@ export function NEXUSChat() {
   function renderText(text: string) {
     const parts = text.split(/\*\*(.+?)\*\*/g);
     return parts.map((p, i) =>
-      i % 2 === 1
-        ? <strong key={i} className="text-signal-cyan font-semibold">{p}</strong>
-        : p
+      i % 2 === 1 ? <strong key={i} className="text-signal-cyan font-semibold">{p}</strong> : p
     );
   }
 
@@ -204,7 +189,7 @@ export function NEXUSChat() {
             className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-full border border-signal-violet/50 bg-void/90 px-4 py-3 shadow-glow-violet backdrop-blur-xl transition-all hover:shadow-glow-cyan"
             aria-label="Open NEXUS assistant"
           >
-            <NexusAvatar size={28} pulse />
+            <NEXUSAvatar size={28} pulse />
             <span className="font-mono text-xs font-medium uppercase tracking-[0.15em] text-ink">
               Ask NEXUS
             </span>
@@ -226,7 +211,7 @@ export function NEXUSChat() {
             {/* header */}
             <div className="flex items-center justify-between border-b border-panel-border bg-panel/60 px-4 py-3">
               <div className="flex items-center gap-2.5">
-                <NexusAvatar size={30} pulse />
+                <NEXUSAvatar size={30} pulse />
                 <div>
                   <div className="font-display text-sm font-semibold text-ink">NEXUS</div>
                   <div className="font-mono text-[10px] text-signal-cyan uppercase tracking-wider">
@@ -262,7 +247,7 @@ export function NEXUSChat() {
                       transition={{ duration: 0.25 }}
                       className={cn("flex gap-2.5", m.role === "user" ? "flex-row-reverse" : "flex-row")}
                     >
-                      {m.role === "assistant" && <NexusAvatar size={26} />}
+                      {m.role === "assistant" && <NEXUSAvatar size={26} />}
                       <div className="flex flex-col max-w-[82%]">
                         <div
                           className={cn(
@@ -274,17 +259,14 @@ export function NEXUSChat() {
                         >
                           {renderText(m.content)}
                         </div>
-                        {/* Contact action buttons */}
-                        {m.actions && m.actions.length > 0 && (
-                          <ContactButtons actions={m.actions} />
-                        )}
+                        {m.actions && <ContactButtons actions={m.actions} />}
                       </div>
                     </motion.div>
                   ))}
 
                   {loading && (
                     <div className="flex gap-2.5">
-                      <NexusAvatar size={26} />
+                      <NEXUSAvatar size={26} />
                       <div className="flex items-center gap-1.5 rounded-2xl rounded-tl-sm border border-panel-border bg-panel/80 px-3.5 py-2.5">
                         <Loader2 size={13} className="animate-spin text-signal-cyan" />
                         <span className="font-mono text-xs text-ink-faint">Thinking…</span>
@@ -329,9 +311,13 @@ export function NEXUSChat() {
                       <Send size={13} />
                     </button>
                   </div>
-                  <p className="mt-1.5 text-center font-mono text-[9px] text-ink-faint">
-                    NEXUS · AI by Sithija Kalhara
-                  </p>
+                  <div className="w-full flex justify-center items-center font-sans mt-1.5">
+                    <p className="text-[10.5px] tracking-wider text-neutral-500 text-center">
+                      <span className="font-extrabold tracking-[0.25em] text-white uppercase mr-2">NEXUS</span>
+                      <span className="italic font-light text-neutral-400 text-[10px]">powered by</span>{" "}
+                      <span className="font-medium text-neutral-200">Sithija Kalhara</span>
+                    </p>
+                  </div>
                 </div>
               </>
             )}
