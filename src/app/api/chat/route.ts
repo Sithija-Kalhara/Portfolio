@@ -57,7 +57,7 @@ function getFallbackResponse(message: string): { text: string; action: string | 
   if (msg.includes("skill") || msg.includes("tech") || msg.includes("stack"))
     return { text: "Sithija's stack hits different 🔥 — **React (95%), Next.js (92%), Node.js (90%), TypeScript (88%)**, MongoDB, Three.js, Cloudflare, Docker. Plus AI integrations (Claude, OpenAI, Gemini). Check the skills section!", action: "stack" };
   if (msg.includes("contact") || msg.includes("hire") || msg.includes("freelance") || msg.includes("email") || msg.includes("call") || msg.includes("whatsapp"))
-    return { text: "Absolutely! Sithija is open for collaborations, freelance, and AI projects. Hit him up at **sithijakalhara2@gmail.com** or WhatsApp **+94702058956**. Use the buttons below to connect instantly! 📬", action: "contact" };
+    return { text: "Absolutely! Sithija is open for collaborations, freelance, and AI projects. Hit him up at **sithijakalhara2@gmail.com** or WhatsApp **+94712058956**. Use the buttons below to connect instantly! 📬", action: "contact" };
   if (msg.includes("gaming") || msg.includes("flexy") || msg.includes("stream") || msg.includes("youtube"))
     return { text: "As **Mr. Flexy**, Sithija streams Apex Legends, Free Fire & more on YouTube (@mrflexy1) and TikTok (@mr._.flexy — 2.3K followers!). Bilingual Sinhala+English content. GG! 🎮", action: "stream" };
   if (msg.includes("experience") || msg.includes("education") || msg.includes("chuo") || msg.includes("background"))
