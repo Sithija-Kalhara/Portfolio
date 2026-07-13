@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionTag } from "@/components/ui/SectionTag";
 import { profile, stats } from "@/data/profile";
-import ProfilePic from "../assist/avatar.jpg";
+import ProfilePic from "../assist/avatar.png";
 
 export function About() {
   return (
@@ -13,9 +13,6 @@ export function About() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-panel-border to-transparent" />
 
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <Reveal>
-          <SectionTag index="01" label="About" accent="violet" />
-        </Reveal>
 
         <div className="mt-8 grid grid-cols-1 gap-12 lg:grid-cols-[1.3fr_0.7fr] lg:gap-16">
           {/* ── Left: text content ── */}

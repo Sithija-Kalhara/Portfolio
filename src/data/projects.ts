@@ -129,7 +129,7 @@ export type TimelineItem = {
 
 export const timeline: TimelineItem[] = [
   {
-    year: "2024–Present",
+    year: "2026–Present",
     title: "AI Student",
     org: "Chuo College of AI, Japan",
     type: "education",
