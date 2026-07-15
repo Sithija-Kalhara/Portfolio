@@ -217,11 +217,16 @@ export function NEXUSChat() {
     setLoading(true);
 
     try {
+      // For Sinhala: send original text but flag it clearly
+      const apiContent = isSinhala(resolved)
+        ? `[SINHALA MESSAGE - Reply in Sinhala]: ${resolved}`
+        : resolved;
+
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: [...messages, { role: "user", content: resolved }],
+          messages: [...messages, { role: "user", content: apiContent }],
           lang: isSinhala(text) ? "si" : "en",
         }),
       });

@@ -53,6 +53,7 @@ UI NAVIGATION — add at end of response when relevant:
 `;
 
 function isSinhala(text: string): boolean {
+  // Unicode range for Sinhala characters: U+0D80–U+0DFF
   return /[\u0D80-\u0DFF]/.test(text);
 }
 
@@ -99,12 +100,18 @@ function getFallbackResponse(message: string): { text: string; action: string | 
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages } = await req.json();
+    const { messages, lang } = await req.json();
+    const lastContent = messages[messages.length - 1]?.content || "";
+    const isSi = lang === "si" || isSinhala(lastContent);
+
+    // Sinhala instruction to append
+    const siInstruction = isSi
+      ? "\n\nIMPORTANT: The user is writing in Sinhala. You MUST reply in Sinhala (සිංහල) only."
+      : "";
 
     // No API key → use smart fallback
     if (!GEMINI_API_KEY) {
-      const lastMessage = messages[messages.length - 1]?.content || "";
-      return NextResponse.json(getFallbackResponse(lastMessage));
+      return NextResponse.json(getFallbackResponse(lastContent));
     }
 
     const urls = [
@@ -118,13 +125,18 @@ export async function POST(req: NextRequest) {
       parts: [{ text: m.content }],
     }));
 
+    // For Sinhala: wrap the message with explicit instruction
+    const userContent = isSi
+      ? `[User is writing in Sinhala. Reply ONLY in Sinhala/සිංහල]\n${lastMessage.content}`
+      : lastMessage.content;
+
     for (const GEMINI_URL of urls) {
       try {
         const body = {
-          system_instruction: { parts: [{ text: SITHIJA_CONTEXT }] },
+          system_instruction: { parts: [{ text: SITHIJA_CONTEXT + siInstruction }] },
           contents: [
             ...history,
-            { role: "user", parts: [{ text: lastMessage.content }] },
+            { role: "user", parts: [{ text: userContent }] },
           ],
           generationConfig: { temperature: 0.8, maxOutputTokens: 300, topP: 0.9 },
           safetySettings: [
