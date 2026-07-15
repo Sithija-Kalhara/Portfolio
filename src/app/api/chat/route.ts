@@ -13,6 +13,8 @@ If anyone asks "who are you" or "what is NEXUS" — say: "I'm NEXUS, Sithija Kal
 Keep responses concise (2-4 sentences usually). Use occasional gaming/tech 
 references naturally. Always be helpful and positive about Sithija's work.
 
+CRITICAL: If the user writes in Sinhala (contains සිංහල characters), you MUST reply in Sinhala. Match the user's language always.
+
 SITHIJA KALHARA — FULL PROFILE DATA:
 - Full name: Sithija Kalhara | Gaming alias: Mr. Flexy
 - Location: Oyama, Tochigi, Japan (originally from Sri Lanka)
@@ -50,8 +52,29 @@ UI NAVIGATION — add at end of response when relevant:
 - User wants github stats → SCROLL_TO:stats
 `;
 
+function isSinhala(text: string): boolean {
+  return /[\u0D80-\u0DFF]/.test(text);
+}
+
 function getFallbackResponse(message: string): { text: string; action: string | null } {
   const msg = message.toLowerCase();
+  const si  = isSinhala(message);
+
+  // ── Sinhala responses ──
+  if (si) {
+    if (msg.includes("project") || message.includes("ව්‍යාපෘති") || message.includes("eyerone"))
+      return { text: "සිතිජගේ ප්‍රධාන project එක **Eyerone.com** — ඔහු තනිවම හැදූ social media & live streaming platform එකක්! HLS streaming, gift system, EyeCoin payments, passkey auth. Epic build! 🚀", action: "projects" };
+    if (message.includes("කතා") || message.includes("සම්බන්ධ") || message.includes("hire"))
+      return { text: "ඔව්! සිතිජ collaborations, freelance, AI projects සඳහා available. **sithijakalhara2@gmail.com** හෝ WhatsApp **+94712058956** මගින් contact කරන්න. පහළ buttons use කරන්න! 📬", action: "contact" };
+    if (message.includes("කවුද") || message.includes("sithija") || message.includes("සිතිජ"))
+      return { text: "**සිතිජ කල්හාර** — Sri Lanka ඉදල Japan (Oyama) ගිය Full-Stack Developer කෙනෙක්. Eyerone ව්‍යාපාරයේ Founder, AI student, Mr. Flexy විදිහට gaming content creator. 2019 ඉදල code කරනවා! 💪", action: "about" };
+    if (message.includes("nexus") || message.includes("ඔයා කවුද"))
+      return { text: "මම **NEXUS** — සිතිජ කල්හාරගේ personal AI assistant! ඔහුගේ skills, projects, experience ගැන ඕනෑ දෙයක් අහන්න. Mr. Flexy ගේ gaming content ගැනත් කියන්න පුළුවන්! 🤖⚡", action: null };
+    // Default Sinhala
+    return { text: "හෙලෝ! මම **NEXUS**, සිතිජගේ AI assistant. ඔහුගේ projects, tech stack, gaming content, experience, හෝ hire කරන හැටි ගැන අහන්න! 🎯", action: null };
+  }
+
+  // ── English responses ──
   if (msg.includes("project") || msg.includes("eyerone"))
     return { text: "Sithija's flagship project is **Eyerone.com** — a full social media & live streaming platform built solo! HLS streaming, TikTok-style gifts, EyeCoin payments via Stripe, and passkey auth. Legendary build! 🚀", action: "projects" };
   if (msg.includes("skill") || msg.includes("tech") || msg.includes("stack"))
@@ -66,10 +89,10 @@ function getFallbackResponse(message: string): { text: string; action: string | 
     return { text: "Check out Sithija's **GitHub stats** — 108+ contributions this year, 12+ public repos, JavaScript/TypeScript as top languages. Consistent shipper! 📊", action: "stats" };
   if (msg.includes("about") || msg.includes("who") || msg.includes("sithija"))
     return { text: "**Sithija Kalhara** — Full-Stack Developer from Sri Lanka, based in Oyama, Japan. Founder of Eyerone, AI student, and streams as Mr. Flexy. Coding since 2019, building massive things! 💪", action: "about" };
-  if (msg.includes("who is nexus") || msg.includes("what is nexus") || msg.includes("who are you") || msg.includes("what are you") || msg.includes("introduce") || msg.includes("nexus"))
-    return { text: "I'm **NEXUS** — Sithija Kalhara's personal AI assistant! Think of me as his digital representative. I know everything about his skills, projects, experience, and how to reach him. Ask me anything — from his tech stack to his gaming content as **Mr. Flexy**. I'm here to help! 🤖⚡", action: null };
-  if (msg.includes("how long") || msg.includes("journey") || msg.includes("coding journey") || msg.includes("years") || msg.includes("started") || msg.includes("when"))
-    return { text: "Sithija's been coding since **2019** — that's **5+ years** of pure self-taught grind! Started from scratch with HTML/CSS, leveled up to full-stack, founded **Eyerone**, and is now studying AI in Japan. The ultimate developer speedrun! 🚀", action: "experience" };
+  if (msg.includes("nexus"))
+    return { text: "I'm **NEXUS** — Sithija Kalhara's personal AI assistant! Think of me as his digital representative. I know everything about his skills, projects, experience, and how to reach him. 🤖⚡", action: null };
+  if (msg.includes("how long") || msg.includes("journey") || msg.includes("years") || msg.includes("started"))
+    return { text: "Sithija's been coding since **2019** — that's **5+ years** of pure self-taught grind! Started from scratch with HTML/CSS, leveled up to full-stack, founded **Eyerone**, and is now studying AI in Japan. 🚀", action: "experience" };
   // Default
   return { text: "Hey! I'm **NEXUS**, Sithija's AI assistant. Ask me about his projects (Eyerone!), tech stack, gaming content as Mr. Flexy, experience, or how to hire him. What would you like to know? 🎯", action: null };
 }
