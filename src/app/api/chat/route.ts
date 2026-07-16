@@ -111,7 +111,7 @@ function getFallbackResponse(message: string): { text: string; action: string | 
         action: null 
       };
     }
-    if (msg.includes("how long") || msg.includes("journey") || msg.includes("years") || msg.includes("started") || msg.includes("කාලය") || msg.includes("අවුරුදු") || msg.includes("කොච්චර කාලයක්ද") || msg.includes("පටන් ගෙන කොච්චර කාලයක්ද")) {
+    if (msg.includes("how long") || msg.includes("journey") || msg.includes("years") || msg.includes("started") || msg.includes("කාලය") || msg.includes("අවුරුදු") || msg.includes("කොච්චර කාලයක්ද") || msg.includes("පටන් ගෙන කොච්චර කාලයක්ද")  || msg.includes("කොච්චර කාලෙක ඉදලද code කරන්නෙ")) {
       return { 
         text: "සිතිජ කෝඩින් කරන්න පටන් ගත්තේ **2019** අවුරුද්දේ. දැන් **අවුරුදු 5කට වඩා වැඩි** self-taught grind එකක් තියෙනවා! HTML/CSS වලින් පටන් අරන්, අද වෙද්දි full-stack level එකටම ඇවිත් තමන්ගේම platform එකක් (Eyerone) හදලා, ජපානයේ AI ඉගෙනගන්න මට්ටමටම ඇවිත් තියෙනවා. 🚀", 
         action: "experience" 
