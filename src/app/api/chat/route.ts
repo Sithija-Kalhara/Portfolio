@@ -77,7 +77,7 @@ function getFallbackResponse(message: string): { text: string; action: string | 
     }
     if (msg.includes("කතා") || msg.includes("සම්බන්ධ") || msg.includes("hire") || msg.includes("contact") || msg.includes("email") || msg.includes("call") || msg.includes("whatsapp") || msg.includes("freelance") || msg.includes("collaboration") || msg.includes("freelancing") || msg.includes("collaborations") || msg.includes("කතා කරන්න") || msg.includes("සම්බන්ධ කරන්න") || msg.includes("වැඩ") ) {
       return { 
-        text: "ඔව්, අනිවාර්යයෙන්ම! සිතිජ freelance වැඩ, collaborations සහ අලුත් AI projects කරන්න කැමැත්තෙන් ඉන්නෙ. එයාට **sithijakalhara2@gmail.com** එකට email එකක් දාන්න, නැත්නම් WhatsApp **+94712058956** හරහා direct message එකක් දාන්න. පහළ තියෙන buttons වලින් ලේසියෙන්ම contact කරන්න පුළුවන්! 📬", 
+        text: "ඔව්, අනිවාර්යයෙන්ම! සිතිජ freelance වැඩ, collaborations සහ අලුත් AI projects කරන්න කැමැත්තෙන් ඉන්නෙ. එයාට **sithijakalhara2@gmail.com** එකට හෝ **hello@sithijakalhara.com** එකට email එකක් දාන්න, නැත්නම් WhatsApp **+94712058956** හරහා direct message එකක් දාන්න. පහළ තියෙන buttons වලින් ලේසියෙන්ම contact කරන්න පුළුවන්! 📬", 
         action: "contact" 
       };
     }
@@ -87,7 +87,10 @@ function getFallbackResponse(message: string): { text: string; action: string | 
         action: "stream" 
       };
     }
-    if (msg.includes("experience") || msg.includes("education") || msg.includes("chuo") || msg.includes("ඉගෙන") || msg.includes("ගියේ")|| msg.includes("background") || msg.includes("අධ්‍යාපන")|| msg.includes("අධ්‍යාපනය") || msg.includes("ඉගෙනුම")|| msg.includes("ඉගෙනුම්") || msg.includes("අධ්‍යාපනික") || msg.includes("අධ්‍යාපනිකව") || msg.includes("අධ්‍යාපනිකවම") || msg.includes("අධ්‍යාපනිකවමද") || msg.includes("අධ්‍යාපනිකවමද?") || msg.includes("අධ්‍යාපනිකවමද?") || msg.includes("අධ්‍යාපනිකවමද?") || msg.includes("අධ්‍යාපනිකවමද?") || msg.includes("අධ්‍යාපනිකවමද?") || msg.includes("අධ්‍යාපනිකවමද?") || msg.includes("අධ්‍යාපනිකවමද?") || msg.includes("අධ්‍යාපනිකවමද?") || msg.includes("අධ්‍යාපනිකවමද?") || msg.includes("අධ්‍යාපනිකවමද?") || msg.includes("අධ්‍යාපනිකවමද?") || msg.includes("අධ්‍යාපනිකවමද?") || msg.includes("අධ්‍යාපනිකවමද?") || msg.includes("අධ්‍යාපනිකවමද?")) {
+    if (msg.includes("experience") || msg.includes("education") || msg.includes("chuo") || msg.includes("ඉගෙන") || msg.includes("ගියේ")|| msg.includes("background") || msg.includes("අධ්‍යාපන")||
+     msg.includes("අධ්‍යාපනය") || msg.includes("ඉගෙනුම")|| msg.includes("ඉගෙනුම්") || msg.includes("අධ්‍යාපනික") || msg.includes("අධ්‍යාපනිකව") ||
+      msg.includes("අධ්‍යාපනිකවම") || msg.includes("අද්‍යාපනය") || msg.includes("අද්‍යාපනය") || msg.includes("අද්‍යාපන තත්වය") 
+    || msg.includes("ඉගෙනීම") || msg.includes("ඉගෙනුම් තත්වය") || msg.includes("ඉගෙනුම")) {
       return { 
         text: "සිතිජ 2019 ඉදලා self-taught developer කෙනෙක් විදිහට ගේම ගහන්න ගත්තේ. 2023 දී **Eyerone** පටන් ගත්තා, දැන් එයා ජපානයේ **Chuo College of AI** එකේ AI Data Science හදාරනවා. Zero to Full-Stack Founder කෙනෙක් දක්වා ආපු පට්ටම journey එකක්! ⚡", 
         action: "experience" 
@@ -95,13 +98,13 @@ function getFallbackResponse(message: string): { text: string; action: string | 
     }
     if (msg.includes("github") || msg.includes("stats") || msg.includes("commit") || msg.includes("කෝඩ්") || msg.includes("ගිට්හබ්") || msg.includes("ගිට්") || msg.includes("ගිට්හබ් stats") || msg.includes("ගිට් stats") || msg.includes("ගිට්හබ් contributions") || msg.includes("ගිට් contributions")) {
       return { 
-        text: "සිතිජගේ GitHub stats බැලුවොත් ඔයාට පෙනෙයි එයා කොච්චර active ද කියලා! 📊 මේ අවුරුද්දෙ විතරක් contributions 108කට වඩා කරලා තියෙනවා. JavaScript සහ TypeScript වලින් තමයි වැඩිපුරම magic කරලා තියෙන්නෙ. බලන්නකෝ stats section එක!", 
+        text: "සිතිජගේ GitHub stats බැලුවොත් ඔයාට පෙනෙයි එයා කොච්චර active ද කියලා! 📊 මේ අවුරුද්දෙ විතරක් contributions 200කට වඩා කරලා තියෙනවා. JavaScript සහ TypeScript වලින් තමයි වැඩිපුරම magic කරලා තියෙන්නෙ. බලන්නකෝ stats section එක!", 
         action: "stats" 
       };
     }
     if (msg.includes("කවුද") || msg.includes("sithija") || msg.includes("සිතිජ") || msg.includes("about")|| msg.includes("ඔයා කවුද") || msg.includes("ඔයාගේ නම") || msg.includes("ඔයාගේ විස්තර")|| msg.includes("ඔයාගේ විස්තරය") || msg.includes("ඔයාගේ විස්තරය කියන්න") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?")) {
       return { 
-        text: "**සිතිජ කල්හාර** කියන්නෙ ලංකාවෙන් ජපානයට (Oyama, Tochigi) සංක්‍රමණය වුණු Full-Stack Developer කෙනෙක්. එයා Eyerone හි නිර්මාතෘවරයා වගේම AI Data Science ශිෂ්‍යයෙක්. Mr. Flexy නමින් Gaming content creator කෙනෙක් විදිහටත් වැඩ කරනවා. 💪", 
+        text: "**සිතිජ කල්හාර** කියන්නෙ ලංකාවෙන් ජපානයට (Oyama, Tochigi) වැඩිදුර අද්‍යාපනය හැදෑරීමට ගිය Full-Stack Developer කෙනෙක්. එයා Eyerone හි නිර්මාතෘවරයා වගේම AI Data Science ශිෂ්‍යයෙක්. Mr. Flexy නමින් Gaming content creator කෙනෙක් විදිහටත් වැඩ කරනවා. 💪", 
         action: "about" 
       };
     }
