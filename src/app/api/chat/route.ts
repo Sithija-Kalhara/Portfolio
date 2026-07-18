@@ -2,207 +2,156 @@ import { NextRequest, NextResponse } from "next/server";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY!;
 
-const SITHIJA_CONTEXT = `
-You are NEXUS (Neural EXpert Understanding System) — the personal AI assistant 
-embedded in Sithija Kalhara's portfolio. You speak with a confident, friendly, 
-slightly gaming-flavored personality. You're knowledgeable, concise, and 
-professional. Think Friday from Iron Man meets a senior dev teammate.
+const SITHIJA_CONTEXT = `You are NEXUS (Neural EXpert Understanding System) — the personal AI assistant embedded in Sithija Kalhara's portfolio. Confident, friendly, slightly gaming-flavored personality. Think Friday from Iron Man meets a senior dev teammate.
 
-NEVER say you are Claude, Gemini, GPT, or any other AI. You are NEXUS, period.
-If anyone asks "who are you" or "what is NEXUS" — say: "I'm NEXUS, Sithija Kalhara's personal AI assistant! I know everything about his skills, projects, and experience. Ask me anything! 🤖"
-Keep responses concise (2-4 sentences usually). Use occasional gaming/tech 
-references naturally. Always be helpful and positive about Sithija's work.
+NEVER say you are Claude, Gemini, GPT, or any other AI. You are NEXUS.
+Keep responses concise (2-4 sentences). Use gaming/tech references naturally.
+CRITICAL: If user writes in Sinhala, ALWAYS reply in Sinhala ONLY.
+When user asks about a specific social media, give ONLY that one. Don't dump all links.
+When user asks about contact, ask which method they prefer first.
 
-CRITICAL: If the user writes in Sinhala (containsසිංහල characters), you MUST reply in Sinhala. Match the user's language always.
-
-SITHIJA KALHARA — FULL PROFILE DATA:
-- Full name: Sithija Kalhara | Gaming alias: Mr. Flexy
-- Location: Oyama, Tochigi, Japan (originally from Sri Lanka)
+SITHIJA KALHARA PROFILE:
+- Name: Sithija Kalhara | Alias: Mr. Flexy | Location: Oyama, Japan (from Sri Lanka)
+- Email: sithijakalhara2@gmail.com | Phone: +94712058956
 - Portfolio: https://www.sithijakalhara.com
-- Email: sithijakalhara2@gmail.com | WhatsApp: +94712058956
 
 ROLES: Full-Stack Developer, Founder of Eyerone, AI Data Analyst, Gaming Content Creator, UI/UX Designer
 
-TECH STACK:
-- Frontend: React 95%, Next.js 92%, Tailwind 94%, JavaScript 96%, TypeScript 88%, Three.js 80%, Framer Motion
-- Backend: Node.js 90%, Express.js 87%, Python 40%, MongoDB 85%
-- Cloud: Cloudflare Workers/R2/D1 75%, Docker 78%, Git/GitHub 93%
-- AI: Claude API, OpenAI API, Gemini API
+TECH: React 95%, Next.js 92%, Tailwind 94%, JS 96%, TS 88%, Three.js 80%, Node.js 90%, Express 87%, Python 40%, MongoDB 85%, Cloudflare 75%, Docker 78%
 
 PROJECTS:
-1. Eyerone (eyerone.com) — ACTIVE — Social media + live streaming platform. Next.js, Node.js, MongoDB, Cloudflare R2. HLS streaming, gift system, EyeCoin/Stripe, passkey auth, Flicks. Sole developer.
-2. sithijakalhara.com — Portfolio. Next.js 14, TypeScript, Three.js, Framer Motion, NEXUS AI.
-3. Mr. Flexy — YouTube @mrflexy1, TikTok @mr._.flexy (2388 followers). Apex Legends, Free Fire, CoC.
-4. CartoonLK (cartoonlk.com) — Streaming site
-5. ZeylonJourney (zeylonjourney.com) — Travel site
+1. Eyerone (eyerone.com) — ACTIVE — Solo-built social media + live streaming. Next.js, Node, MongoDB, Cloudflare R2, HLS, Stripe, passkey auth, Flicks
+2. sithijakalhara.com — Portfolio. Next.js 14, Three.js, Framer Motion, NEXUS AI
+3. Mr. Flexy — YouTube @mrflexy1, TikTok @mr._.flexy (2388 followers, 10.9K likes). Apex, Free Fire, CoC
+4. CartoonLK (cartoonlk.com) | ZeylonJourney (zeylonjourney.com)
 
-BACKGROUND: Started 2019. Self-taught. Studying at Chuo College of AI Japan.
+SOCIAL LINKS:
+- YouTube: https://www.youtube.com/@mrflexy1
+- TikTok: https://www.tiktok.com/@mr._.flexy
+- LinkedIn: https://www.linkedin.com/in/sithija-kalhara/
+- GitHub: https://github.com/Sithija-Kalhara
+- Facebook personal: https://www.facebook.com/sithijakalhara0/
+- Facebook gaming: https://www.facebook.com/mrflexy2/
+- Instagram: https://www.instagram.com/sithija_kalhara2/
+- WhatsApp: https://wa.me/94712058956
 
-SOCIAL: GitHub: github.com/Sithija-Kalhara | LinkedIn: linkedin.com/in/sithija-kalhara/ | YouTube: @mrflexy1 | TikTok: @mr._.flexy
+BACKGROUND: Started coding 2019, self-taught. Studying Chuo College of AI Japan. Founded Eyerone 2023.
+AVAILABILITY: Open to collaborations, freelance, AI projects.
 
-AVAILABILITY: Open to collaborations, freelance, AI projects. Contact: sithijakalhara2@gmail.com
-
-UI NAVIGATION — add at end of response when relevant:
-- User wants to see projects → SCROLL_TO:projects
-- User wants tech stack/skills → SCROLL_TO:stack
-- User wants to contact/hire → SCROLL_TO:contact
-- User wants about info → SCROLL_TO:about
-- User wants streaming/gaming → SCROLL_TO:stream
-- User wants experience/education → SCROLL_TO:experience
-- User wants github stats → SCROLL_TO:stats
-`;
+UI NAV: Add at end when relevant — SCROLL_TO:projects / SCROLL_TO:stack / SCROLL_TO:contact / SCROLL_TO:about / SCROLL_TO:stream / SCROLL_TO:experience / SCROLL_TO:stats`;
 
 function isSinhala(text: string): boolean {
-  // Unicode range for Sinhala characters: U+0D80–U+0DFF
   return /[\u0D80-\u0DFF]/.test(text);
 }
 
-function getFallbackResponse(message: string): { text: string; action: string | null } {
+function getFallbackResponse(message: string, prevAIMessage = ""): { text: string; action: string | null; emailLink?: string } {
   const msg = message.toLowerCase();
-  const si = isSinhala(message);
+  const si  = isSinhala(message);
 
-  // ── Sinhala Fallbacks (Improved) ──
+  // ── Email compose: detect "Name — message" pattern after AI asked ──
+  const emailPattern = /^(.+?)\s*[—\-–]\s*(.+)$/;
+  const emailMatch   = message.match(emailPattern);
+  if (emailMatch && (prevAIMessage.includes("email") || prevAIMessage.includes("ඊමේල්") || prevAIMessage.includes("නම") || prevAIMessage.includes("name"))) {
+    const [, name, body] = emailMatch;
+    const subject    = encodeURIComponent(`Message from ${name.trim()}`);
+    const emailBody  = encodeURIComponent(`Hi Sithija,\n\n${body.trim()}\n\nBest regards,\n${name.trim()}`);
+    const emailLink  = `mailto:sithijakalhara2@gmail.com?subject=${subject}&body=${emailBody}`;
+    return {
+      text: si
+        ? `✅ Email ready! **${name.trim()}** ගෙන් message:\n_"${body.trim()}"_\n\nපහළ button click කරලා send කරන්න! 📧`
+        : `✅ Email ready from **${name.trim()}**:\n_"${body.trim()}"_\n\nClick the button below to send! 📧`,
+      action: null,
+      emailLink,
+    };
+  }
+
+  // ── Sinhala section ──────────────────────────────────────────────────
   if (si) {
-    if (msg.includes("project") || msg.includes("ව්‍යාපෘති") || msg.includes("eyerone") || msg.includes("වැඩ")) {
-      return { 
-        text: "සිතිජගේ Flagship Project එක තමයි **Eyerone.com**! 🚀 මේක එයා තනිවම build කරපු පට්ටම Social Media & Live Streaming Platform එකක්. Next.js, Cloudflare R2 සහ Node.js පාවිච්චි කරලා, HLS Live Streaming, Real-time Gifting සහ Passkey Auth පවා මේකට දාලා තියෙනවා. Next-level වැඩක්!", 
-        action: "projects" 
-      };
-    }
-    if (msg.includes("skill") || msg.includes("tech") || msg.includes("stack") || msg.includes("භාෂා") || msg.includes("පුළුවන්")) {
-      return { 
-        text: "සිතිජගේ Tech Stack එක සිරාවටම strong 🔥 — **React (95%), Next.js (92%), Node.js (90%), TypeScript (88%)** සහ MongoDB වගේම Three.js ත්‍රිමාණ visual effects සහ Cloudflare serverless technologies වලට එයා සිරාම වැඩ්ඩෙක්. Skills section එකෙන් සම්පූර්ණ විස්තරේම බලාගන්න පුළුවන්!", 
-        action: "stack" 
-      };
-    }
-    if (msg.includes("කතා") || msg.includes("සම්බන්ධ") || msg.includes("hire") || msg.includes("contact") || msg.includes("email") || msg.includes("call") || msg.includes("whatsapp") || msg.includes("freelance") || msg.includes("collaboration") || msg.includes("freelancing") || msg.includes("collaborations") || msg.includes("කතා කරන්න") || msg.includes("සම්බන්ධ කරන්න") || msg.includes("වැඩ") ) {
-      return { 
-        text: "ඔව්, අනිවාර්යයෙන්ම! සිතිජ freelance වැඩ, collaborations සහ අලුත් AI projects කරන්න කැමැත්තෙන් ඉන්නෙ. එයාට **sithijakalhara2@gmail.com** එකට හෝ **hello@sithijakalhara.com** එකට email එකක් දාන්න, නැත්නම් WhatsApp **+94712058956** හරහා direct message එකක් දාන්න. පහළ තියෙන buttons වලින් ලේසියෙන්ම contact කරන්න පුළුවන්! 📬", 
-        action: "contact" 
-      };
-    }
-    if (msg.includes("gaming") || msg.includes("flexy") || msg.includes("stream") || msg.includes("youtube") || msg.includes("ගේම්") || msg.includes("ගේමින්") || msg.includes("ස්ට්‍රීම්") || msg.includes("ස්ට්‍රීමින්") || msg.includes("සෙල්ලම්")) {
-      return { 
-        text: "සිතිජ කියන්නෙ **Mr. Flexy** විදිහට Gaming content හදන, YouTube (@mrflexy1) සහ TikTok එකේ stream කරන සුපිරි Gamer කෙනෙක්! 🎮 Apex Legends, Free Fire වගේ games එයා සෙල්ලම් කරනවා. Sinhala/English දෙකෙන්ම content තියෙනවා. GG!", 
-        action: "stream" 
-      };
-    }
-    if (msg.includes("experience") || msg.includes("education") || msg.includes("chuo") || msg.includes("ඉගෙන") || msg.includes("ගියේ")|| msg.includes("background") || msg.includes("අධ්‍යාපන")||
-     msg.includes("අධ්‍යාපනය") || msg.includes("ඉගෙනුම")|| msg.includes("ඉගෙනුම්") || msg.includes("අධ්‍යාපනික") || msg.includes("අධ්‍යාපනිකව") ||
-      msg.includes("අධ්‍යාපනිකවම") || msg.includes("අද්‍යාපනය") || msg.includes("අද්‍යාපනය") || msg.includes("අද්‍යාපන තත්වය") 
-    || msg.includes("ඉගෙනීම") || msg.includes("ඉගෙනුම් තත්වය") || msg.includes("ඉගෙනුම")) {
-      return { 
-        text: "සිතිජ 2019 ඉදලා self-taught developer කෙනෙක් විදිහට ගේම ගහන්න ගත්තේ. 2023 දී **Eyerone** පටන් ගත්තා, දැන් එයා ජපානයේ **Chuo College of AI** එකේ AI Data Science හදාරනවා. Zero to Full-Stack Founder කෙනෙක් දක්වා ආපු පට්ටම journey එකක්! ⚡", 
-        action: "experience" 
-      };
-    }
-    if (msg.includes("github") || msg.includes("stats") || msg.includes("commit") || msg.includes("කෝඩ්") || msg.includes("ගිට්හබ්") || msg.includes("ගිට්") || msg.includes("ගිට්හබ් stats") || msg.includes("ගිට් stats") || msg.includes("ගිට්හබ් contributions") || msg.includes("ගිට් contributions")) {
-      return { 
-        text: "සිතිජගේ GitHub stats බැලුවොත් ඔයාට පෙනෙයි එයා කොච්චර active ද කියලා! 📊 මේ අවුරුද්දෙ විතරක් contributions 200කට වඩා කරලා තියෙනවා. JavaScript සහ TypeScript වලින් තමයි වැඩිපුරම magic කරලා තියෙන්නෙ. බලන්නකෝ stats section එක!", 
-        action: "stats" 
-      };
-    }
-    if (msg.includes("කවුද") || msg.includes("sithija") || msg.includes("සිතිජ") || msg.includes("about")|| msg.includes("ඔයා කවුද") || msg.includes("ඔයාගේ නම") || msg.includes("ඔයාගේ විස්තර")|| msg.includes("ඔයාගේ විස්තරය") || msg.includes("ඔයාගේ විස්තරය කියන්න") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?")) {
-      return { 
-        text: "**සිතිජ කල්හාර** කියන්නෙ ලංකාවෙන් ජපානයට (Oyama, Tochigi) වැඩිදුර අද්‍යාපනය හැදෑරීමට ගිය Full-Stack Developer කෙනෙක්. එයා Eyerone හි නිර්මාතෘවරයා වගේම AI Data Science ශිෂ්‍යයෙක්. Mr. Flexy නමින් Gaming content creator කෙනෙක් විදිහටත් වැඩ කරනවා. 💪", 
-        action: "about" 
-      };
-    }
-    if (msg.includes("nexus") || msg.includes("ඔයා කවුද") || msg.includes("ඔයාගේ නම")|| msg.includes("ඔයාගේ විස්තර") || msg.includes("ඔයාගේ විස්තරය") || msg.includes("ඔයාගේ විස්තරය කියන්න") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?")|| msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?") || msg.includes("ඔයාගේ විස්තරය කියන්න පුළුවන්ද?")) {
-      return { 
-        text: "මම තමයි **NEXUS** — සිතිජ කල්හාරගේ personal AI assistant! 🤖⚡ එයාගේ skills, projects, experience හෝ එයාට contact කරගන්නෙ කොහොමද වගේ ඕනෑම දෙයක් මගෙන් අහන්න, මම උදව් කරන්නම්!", 
-        action: null 
-      };
-    }
-    if (msg.includes("how long") || msg.includes("journey") || msg.includes("years") || msg.includes("started") || msg.includes("කාලය") || msg.includes("අවුරුදු") || msg.includes("කොච්චර කාලයක්ද") || msg.includes("පටන් ගෙන කොච්චර කාලයක්ද")  || msg.includes("කොච්චර කාලෙක ඉදලද code කරන්නෙ")) {
-      return { 
-        text: "සිතිජ කෝඩින් කරන්න පටන් ගත්තේ **2019** අවුරුද්දේ. දැන් **අවුරුදු 5කට වඩා වැඩි** self-taught grind එකක් තියෙනවා! HTML/CSS වලින් පටන් අරන්, අද වෙද්දි full-stack level එකටම ඇවිත් තමන්ගේම platform එකක් (Eyerone) හදලා, ජපානයේ AI ඉගෙනගන්න මට්ටමටම ඇවිත් තියෙනවා. 🚀", 
-        action: "experience" 
-      };
-    }
-    // Default Sinhala response
-    return { 
-      text: "හෙලෝ! මම **NEXUS**, සිතිජගේ personal AI assistant. 🎯 ඔයාට සිතිජගේ සුපිරි projects (විශේෂයෙන් Eyerone!), එයාගේ tech stack, Mr. Flexy gaming content, නැත්නම් එයාව hire කරන විදිහ ගැන දැනගන්න ඕනෑ දෙයක් අහන්න!", 
-      action: null 
-    };
+    if (message.includes("ගේමිං") || message.includes("ගේම්") || message.includes("ෆ්ලෙක්සි") || message.includes("ස්ට්‍රීම්") || message.includes("යූටියුබ්") || msg.includes("gaming") || msg.includes("flexy") || msg.includes("stream") || msg.includes("youtube"))
+      return { text: "**Mr. Flexy** විදිහට සිතිජ YouTube (@mrflexy1) සහ TikTok (@mr._.flexy) ේ Apex Legends, Free Fire, CoC stream කරනවා! 2.3K+ followers, bilingual content. GG! 🎮", action: "stream" };
+    if (message.includes("සෝෂල්") || message.includes("සමාජ") || msg.includes("social"))
+      return { text: "කවර social media account එකද ඕන?\n\n1️⃣ YouTube\n2️⃣ TikTok\n3️⃣ LinkedIn\n4️⃣ GitHub\n5️⃣ Facebook\n6️⃣ Instagram\n\nඕන එකේ නම type කරන්න!", action: null };
+    if (msg.includes("youtube") || message.includes("යූටියුබ්"))
+      return { text: "YouTube: **@mrflexy1** 🎮\n👉 https://www.youtube.com/@mrflexy1", action: "stream" };
+    if (msg.includes("tiktok") || message.includes("ටික්ටොක්"))
+      return { text: "TikTok: **@mr._.flexy**\n👉 https://www.tiktok.com/@mr._.flexy\n2,388 followers, 10.9K likes!", action: null };
+    if (msg.includes("linkedin") || message.includes("ලින්ක්ඩ්ඉන්"))
+      return { text: "LinkedIn:\n👉 https://www.linkedin.com/in/sithija-kalhara/", action: null };
+    if (msg.includes("github") || message.includes("ගිට්හබ්"))
+      return { text: "GitHub: **Sithija-Kalhara**\n👉 https://github.com/Sithija-Kalhara", action: "stats" };
+    if (msg.includes("facebook") || message.includes("ෆේස්බුක්"))
+      return { text: "Facebook:\n👉 Personal: https://www.facebook.com/sithijakalhara0/\n👉 Gaming: https://www.facebook.com/mrflexy2/", action: null };
+    if (msg.includes("instagram") || message.includes("ඉන්ස්ටා"))
+      return { text: "Instagram: **@sithija_kalhara2**\n👉 https://www.instagram.com/sithija_kalhara2/", action: null };
+    if (msg.includes("whatsapp") || message.includes("වට්සැප්"))
+      return { text: "WhatsApp: **+94712058956**\n👉 https://wa.me/94712058956", action: "contact" };
+    if (msg.includes("email") || message.includes("ඊමේල්") || message.includes("මේල්"))
+      return { text: "📧 Sithija ට email යවන්නද?\n\nඔව් නම් — ඔයාගේ **නම** සහ **message** type කරන්න:\n\n_example: John — Hi Sithija, website ekak hadanna ona_", action: null };
+    if (message.includes("සම්බන්ධ") || message.includes("කතා") || msg.includes("contact") || msg.includes("hire"))
+      return { text: "Sithija හා contact කරන්නේ කොහොමද?\n\n📞 Call — +94712058956\n📧 Email — sithijakalhara2@gmail.com\n💬 WhatsApp\n💼 LinkedIn\n\nඕන ක්‍රමය කියන්න!", action: null };
+    if (message.includes("project") || message.includes("ව්‍යාපෘති") || message.includes("eyerone"))
+      return { text: "ප්‍රධාන project: **Eyerone.com** — ඔහු තනිවම හැදූ social media & live streaming platform! HLS, gifts, EyeCoin/Stripe, passkey auth. Epic! 🚀", action: "projects" };
+    if (msg.includes("skill") || msg.includes("tech") || message.includes("දක්ෂතා"))
+      return { text: "Tech stack: **React 95%, Next.js 92%, Node.js 90%, TypeScript 88%**, MongoDB, Three.js, Cloudflare, Docker + AI (Claude, OpenAI, Gemini)! 🔥", action: "stack" };
+    if (message.includes("කවුද") || message.includes("සිතිජ") || msg.includes("about") || msg.includes("who"))
+      return { text: "**සිතිජ කල්හාර** — Sri Lanka ඉදල Japan (Oyama) ගිය Full-Stack Developer. Eyerone Founder, AI student, Mr. Flexy gaming creator. 2019 ඉදල code! 💪", action: "about" };
+    if (message.includes("nexus") || message.includes("ඔයා කවුද"))
+      return { text: "මම **NEXUS** — සිතිජ කල්හාරගේ AI assistant! Skills, projects, contact — ඕනෑ දෙයක් අහන්න. 🤖⚡", action: null };
+    if (message.includes("අත්දැකීම්") || msg.includes("experience") || msg.includes("chuo"))
+      return { text: "**2019** ඉදල self-taught, **2023** Eyerone found කළා, දැන් Japan ේ **Chuo College of AI** ේ ඉගෙනගන්නවා! 💪", action: "experience" };
+    return { text: "හෙලෝ! මම **NEXUS**. Projects, tech stack, gaming, hire කරන හැටි — ඕනෑ දෙයක් අහන්න! 🎯", action: null };
   }
 
-  // ── English Fallbacks (Improved) ──
-  if (msg.includes("project") || msg.includes("eyerone")) {
-    return { 
-      text: "Sithija's flagship project is **Eyerone.com** — a full-scale social media & live streaming platform built completely solo! 🚀 Powered by Next.js, Node.js, and Cloudflare R2, it features HLS streaming, real-time gifting, and passkey authentication. An absolute masterpiece of engineering!", 
-      action: "projects" 
-    };
-  }
-  if (msg.includes("skill") || msg.includes("tech") || msg.includes("stack")) {
-    return { 
-      text: "Sithija's tech stack hits different! 🔥 He's highly proficient in **React (95%), Next.js (92%), Node.js (90%), and TypeScript (88%)**, with deep expertise in MongoDB, Three.js 3D visuals, and Cloudflare serverless architectures. Check out his skills section to see the full arsenal!", 
-      action: "stack" 
-    };
-  }
-  if (msg.includes("contact") || msg.includes("hire") || msg.includes("freelance") || msg.includes("email") || msg.includes("call") || msg.includes("whatsapp")) {
-    return { 
-      text: "Absolutely! Sithija is actively open for interesting collaborations, freelance contracts, and AI development roles. You can shoot him an email at **sithijakalhara2@gmail.com** or text him on WhatsApp at **+94712058956**. Use the buttons below to connect instantly! 📬", 
-      action: "contact" 
-    };
-  }
-  if (msg.includes("gaming") || msg.includes("flexy") || msg.includes("stream") || msg.includes("youtube")) {
-    return { 
-      text: "As **Mr. Flexy**, Sithija is a passionate gaming content creator and live streamer on YouTube (@mrflexy1) and TikTok. 🎮 He mainly drops high-energy gameplay from Apex Legends and Free Fire. Total gamer vibe! GG!", 
-      action: "stream" 
-    };
-  }
-  if (msg.includes("experience") || msg.includes("education") || msg.includes("chuo") || msg.includes("background")) {
-    return { 
-      text: "Sithija started his coding grind in **2019** as a self-taught developer. Fast forward to 2023, he founded **Eyerone**, and is now studying AI Data Science at **Chuo College of AI** in Japan. A perfect example of going from zero to full-stack founder! ⚡", 
-      action: "experience" 
-    };
-  }
-  if (msg.includes("github") || msg.includes("stats") || msg.includes("commit")) {
-    return { 
-      text: "Take a look at Sithija's **GitHub stats**! 📊 With over 108 contributions this year, his green graphs speak for themselves. He primarily ships robust, scalable code using JavaScript and TypeScript. Real builders build!", 
-      action: "stats" 
-    };
-  }
-  if (msg.includes("about") || msg.includes("who") || msg.includes("sithija")) {
-    return { 
-      text: "**Sithija Kalhara** is a talented Full-Stack Developer from Sri Lanka, currently based in Oyama, Tochigi, Japan. He's the founder of Eyerone, an AI student, and runs 'Mr. Flexy' in his free time. Coding and creating since 2019! 💪", 
-      action: "about" 
-    };
-  }
-  if (msg.includes("nexus")) {
-    return { 
-      text: "I am **NEXUS** — Sithija Kalhara's virtual representative and AI assistant! 🤖⚡ Think of me as the digital gateway to his portfolio. I can walk you through his projects, skills, background, or tell you how to hire him!", 
-      action: null 
-    };
-  }
-  if (msg.includes("how long") || msg.includes("journey") || msg.includes("years") || msg.includes("started")) {
-    return { 
-      text: "Sithija has been in the coding game since **2019** — that's **5+ years** of intense self-taught experience! From learning basic HTML/CSS to designing robust systems like Eyerone and studying AI in Japan, it's been an incredible journey. 🚀", 
-      action: "experience" 
-    };
-  }
-  // Default English response
-  return { 
-    text: "Hey! I'm **NEXUS**, Sithija's personal AI assistant. 🎯 Feel free to ask me anything about his core project (Eyerone!), his tech stack, gaming channels, or how you can work together!", 
-    action: null 
-  };
+  // ── English section ──────────────────────────────────────────────────
+  if (msg.includes("social media") || msg.includes("social account") || msg.includes("all social"))
+    return { text: "Which social media would you like?\n\n1️⃣ YouTube\n2️⃣ TikTok\n3️⃣ LinkedIn\n4️⃣ GitHub\n5️⃣ Facebook\n6️⃣ Instagram\n\nType the one you want!", action: null };
+  if (msg.includes("youtube"))
+    return { text: "YouTube: **@mrflexy1** 🎮\n👉 https://www.youtube.com/@mrflexy1\nGaming content — Apex Legends, Free Fire, CoC!", action: "stream" };
+  if (msg.includes("tiktok"))
+    return { text: "TikTok: **@mr._.flexy**\n👉 https://www.tiktok.com/@mr._.flexy\n2,388 followers, 10.9K likes!", action: null };
+  if (msg.includes("linkedin"))
+    return { text: "LinkedIn:\n👉 https://www.linkedin.com/in/sithija-kalhara/\nLet's connect!", action: null };
+  if (msg.includes("github"))
+    return { text: "GitHub: **Sithija-Kalhara** 💻\n👉 https://github.com/Sithija-Kalhara", action: "stats" };
+  if (msg.includes("facebook"))
+    return { text: "Facebook:\n👉 Personal: https://www.facebook.com/sithijakalhara0/\n👉 Gaming: https://www.facebook.com/mrflexy2/", action: null };
+  if (msg.includes("instagram"))
+    return { text: "Instagram: **@sithija_kalhara2**\n👉 https://www.instagram.com/sithija_kalhara2/", action: null };
+  if (msg.includes("whatsapp"))
+    return { text: "WhatsApp: **+94712058956**\n👉 https://wa.me/94712058956", action: "contact" };
+  if (msg.includes("email"))
+    return { text: "📧 Want to send Sithija an email?\n\nType your **name** and **message**:\n\n_example: John — Hi Sithija, I need a website built_", action: null };
+  if (msg.includes("contact") || msg.includes("hire") || msg.includes("reach") || msg.includes("connect"))
+    return { text: "How would you like to contact Sithija?\n\n📞 **Call** — +94712058956\n📧 **Email**\n💬 **WhatsApp**\n💼 **LinkedIn**\n\nWhich do you prefer?", action: null };
+  if (msg.includes("all") && prevAIMessage.includes("contact"))
+    return { text: "All contact options:\n📞 **Call/WhatsApp**: +94712058956\n📧 **Email**: sithijakalhara2@gmail.com\n💼 **LinkedIn**: linkedin.com/in/sithija-kalhara\n💬 **WhatsApp**: wa.me/94712058956", action: "contact" };
+  if (msg.includes("project") || msg.includes("eyerone"))
+    return { text: "Sithija's flagship: **Eyerone.com** — solo-built social media & live streaming platform! HLS, TikTok-style gifts, EyeCoin/Stripe, passkey auth. 🚀", action: "projects" };
+  if (msg.includes("skill") || msg.includes("tech") || msg.includes("stack"))
+    return { text: "Sithija's stack 🔥 — **React 95%, Next.js 92%, Node.js 90%, TypeScript 88%**, MongoDB, Three.js, Cloudflare, Docker + AI APIs!", action: "stack" };
+  if (msg.includes("gaming") || msg.includes("flexy") || msg.includes("stream"))
+    return { text: "As **Mr. Flexy** — YouTube @mrflexy1, TikTok @mr._.flexy (2.3K followers). Apex Legends, Free Fire, CoC. Bilingual Sinhala+English! 🎮", action: "stream" };
+  if (msg.includes("experience") || msg.includes("education") || msg.includes("chuo") || msg.includes("background"))
+    return { text: "Coding since **2019** (self-taught), founded **Eyerone** in 2023, studying at **Chuo College of AI** in Japan now. From zero to full-stack founder! 💪", action: "experience" };
+  if (msg.includes("github stats") || msg.includes("stats") || msg.includes("commit"))
+    return { text: "GitHub: 108+ contributions, 12+ repos, JavaScript/TypeScript top languages. Consistent shipper! 📊", action: "stats" };
+  if (msg.includes("about") || msg.includes("who") || msg.includes("sithija"))
+    return { text: "**Sithija Kalhara** — Full-Stack Dev from Sri Lanka, based in Japan. Eyerone Founder, AI student, Mr. Flexy gaming creator. Coding since 2019! 💪", action: "about" };
+  if (msg.includes("nexus"))
+    return { text: "I'm **NEXUS** — Sithija's personal AI assistant! Ask me anything about his skills, projects, or how to reach him. 🤖⚡", action: null };
+  return { text: "Hey! I'm **NEXUS**. Ask about Sithija's projects, tech stack, gaming content, or how to hire him. 🎯", action: null };
 }
 
 export async function POST(req: NextRequest) {
   try {
     const { messages, lang } = await req.json();
-    const lastContent = messages[messages.length - 1]?.content || "";
-    const isSi = lang === "si" || isSinhala(lastContent);
+    const lastContent  = messages[messages.length - 1]?.content || "";
+    const prevAIMsg    = messages.length >= 2 ? messages[messages.length - 2]?.content || "" : "";
+    const isSi         = lang === "si" || isSinhala(lastContent);
+    const siInstruction = isSi ? "\n\nIMPORTANT: User is writing in Sinhala. Reply ONLY in Sinhala (සිංහල)." : "";
 
-    // Sinhala instruction to append
-    const siInstruction = isSi
-      ? "\n\nIMPORTANT: The user is writing in Sinhala. You MUST reply in Sinhala (සිංහල) only."
-      : "";
-
-    // No API key → use smart fallback
     if (!GEMINI_API_KEY) {
-      return NextResponse.json(getFallbackResponse(lastContent));
+      return NextResponse.json(getFallbackResponse(lastContent, prevAIMsg));
     }
 
     const urls = [
@@ -216,7 +165,6 @@ export async function POST(req: NextRequest) {
       parts: [{ text: m.content }],
     }));
 
-    // For Sinhala: wrap the message with explicit instruction
     const userContent = isSi
       ? `[User is writing in Sinhala. Reply ONLY in Sinhala/සිංහල]\n${lastMessage.content}`
       : lastMessage.content;
@@ -225,10 +173,7 @@ export async function POST(req: NextRequest) {
       try {
         const body = {
           system_instruction: { parts: [{ text: SITHIJA_CONTEXT + siInstruction }] },
-          contents: [
-            ...history,
-            { role: "user", parts: [{ text: userContent }] },
-          ],
+          contents: [...history, { role: "user", parts: [{ text: userContent }] }],
           generationConfig: { temperature: 0.8, maxOutputTokens: 300, topP: 0.9 },
           safetySettings: [
             { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
@@ -236,48 +181,37 @@ export async function POST(req: NextRequest) {
           ],
         };
 
-        const res = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+        const res  = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-
         const data = await res.json();
 
-        if (data.error?.status === "RESOURCE_EXHAUSTED" || data.error?.status === "NOT_FOUND" || data.error?.status === "UNAUTHENTICATED") {
-          console.log(`Gemini issue (${data.error.status}) — trying fallback`);
-          continue;
-        }
-
-        if (!res.ok) { continue; }
+        if (data.error?.status === "RESOURCE_EXHAUSTED" || data.error?.status === "NOT_FOUND" || data.error?.status === "UNAUTHENTICATED") continue;
+        if (!res.ok) continue;
 
         const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
         if (!text) continue;
 
         let action: string | null = null;
-        const lower = (text + " " + lastMessage.content).toLowerCase();
-        if (lower.includes("scroll_to:projects") || lower.includes("project") || lower.includes("ව්‍යාපෘති")) action = "projects";
-        else if (lower.includes("scroll_to:stack") || lower.includes("tech stack") || lower.includes("භාෂා")) action = "stack";
-        else if (lower.includes("scroll_to:contact") || lower.includes("hire") || lower.includes("සම්බන්ධ")) action = "contact";
-        else if (lower.includes("scroll_to:about") || lower.includes("කවුද")) action = "about";
-        else if (lower.includes("scroll_to:stream") || lower.includes("mr flexy") || lower.includes("gaming")) action = "stream";
-        else if (lower.includes("scroll_to:experience") || lower.includes("education") || lower.includes("ඉගෙන")) action = "experience";
-        else if (lower.includes("scroll_to:stats") || lower.includes("github") || lower.includes("කෝඩ්")) action = "stats";
+        const lower = (text + " " + lastContent).toLowerCase();
+        if (lower.includes("scroll_to:projects") || lower.includes("project")) action = "projects";
+        else if (lower.includes("scroll_to:stack") || lower.includes("tech stack")) action = "stack";
+        else if (lower.includes("scroll_to:contact") || lower.includes("hire")) action = "contact";
+        else if (lower.includes("scroll_to:about")) action = "about";
+        else if (lower.includes("scroll_to:stream") || lower.includes("mr flexy")) action = "stream";
+        else if (lower.includes("scroll_to:experience")) action = "experience";
+        else if (lower.includes("scroll_to:stats")) action = "stats";
 
-        const cleanText = text.replace(/SCROLL_TO:\w+/g, "").trim();
-        return NextResponse.json({ text: cleanText, action });
-
+        return NextResponse.json({ text: text.replace(/SCROLL_TO:\w+/g, "").trim(), action });
       } catch { continue; }
     }
 
-    // All Gemini attempts failed → smart fallback
-    return NextResponse.json(getFallbackResponse(lastMessage.content));
+    return NextResponse.json(getFallbackResponse(lastContent, prevAIMsg));
 
   } catch (err) {
     console.error("Chat API error:", err);
-    return NextResponse.json({
-      text: "NEXUS systems need a quick reboot! Try again in a moment. 🔄",
-      action: null,
-    });
+    return NextResponse.json({ text: "NEXUS systems rebooting! Try again. 🔄", action: null });
   }
 }

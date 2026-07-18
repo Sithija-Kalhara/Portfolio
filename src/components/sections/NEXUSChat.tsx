@@ -233,6 +233,8 @@ export function NEXUSChat() {
       const data = await res.json();
       const reply = data.text ?? "Sorry, I had trouble with that. Try again!";
       const showContact = shouldShowContact(text, reply);
+
+      
       setMessages(prev => [...prev, {
         role: "assistant", content: reply,
         actions: showContact ? CONTACT_ACTIONS : undefined,
