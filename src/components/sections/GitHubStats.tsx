@@ -19,30 +19,49 @@ type GitHubData = {
 };
 
 const LANG_COLORS: Record<string, string> = {
-  JavaScript:  "#f7df1e",
-  TypeScript:  "#3178c6",
-  Python:      "#3776ab",
-  CSS:         "#563d7c",
-  HTML:        "#e34c26",
-  Shell:       "#89e051",
+  JavaScript: "#f7df1e",
+  TypeScript: "#3178c6",
+  Python: "#3776ab",
+  CSS: "#563d7c",
+  HTML: "#e34c26",
+  Shell: "#89e051",
   "Jupyter Notebook": "#da5b0b",
 };
 
 export function GitHubStats() {
   const [data, setData] = useState<GitHubData | null>(null);
+  const [fetchFailed, setFetchFailed] = useState(false);
 
   useEffect(() => {
     fetch("/api/github")
-      .then((r) => r.json())
-      .then((d) => { if (!d.error) setData(d); })
-      .catch(() => {});
+      .then(async (r) => {
+        if (!r.ok) {
+          const body = await r.text().catch(() => "");
+          console.error(`/api/github returned ${r.status}: ${body}`);
+          setFetchFailed(true);
+          return;
+        }
+        return r.json();
+      })
+      .then((d) => {
+        if (d && !d.error) setData(d);
+        else if (d?.error) {
+          console.error("/api/github error payload:", d.error);
+          setFetchFailed(true);
+        }
+      })
+      .catch((err) => {
+        console.error("/api/github fetch threw:", err);
+        setFetchFailed(true);
+      });
   }, []);
 
+  // Use ?? so a real value of 0 (e.g. 0 followers) isn't hidden behind the placeholder.
   const quickStats = [
-    { label: "Public Repos",  value: data ? `${data.public_repos}+` : "12+",  color: "text-signal-cyan"         },
-    { label: "Followers",     value: data ? `${data.followers}+`    : "—",     color: "text-signal-violet-light" },
-    { label: "Years Coding",  value: "5+",                                      color: "text-emerald-400"         },
-    { label: "Top Language",  value: data?.topLangs?.[0]?.lang || "JS/TS",     color: "text-signal-crimson"      },
+    { label: "Public Repos", value: data ? `${data.public_repos}+` : "12+", color: "text-signal-cyan" },
+    { label: "Followers", value: data ? `${data.followers}` : "—", color: "text-signal-violet-light" },
+    { label: "Years Coding", value: "5+", color: "text-emerald-400" },
+    { label: "Top Language", value: data?.topLangs?.[0]?.lang || "JS/TS", color: "text-signal-crimson" },
   ];
 
   return (
@@ -51,7 +70,6 @@ export function GitHubStats() {
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern bg-grid opacity-[0.2] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_100%,black,transparent)]" />
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
-
         <Reveal delay={0.05}>
           <h2 className="mt-8 max-w-xl font-display text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
             Code by the numbers.
@@ -59,7 +77,6 @@ export function GitHubStats() {
         </Reveal>
 
         <div className="mt-12 grid grid-cols-1 gap-5 lg:grid-cols-3">
-
           {/* ── GitHub Profile Card (self-hosted data) ── */}
           <Reveal delay={0.08}>
             <motion.div
@@ -89,15 +106,13 @@ export function GitHubStats() {
                 </div>
               </div>
 
-              {data?.bio && (
-                <p className="text-sm leading-relaxed text-ink-dim">{data.bio}</p>
-              )}
+              {data?.bio && <p className="text-sm leading-relaxed text-ink-dim">{data.bio}</p>}
 
               <div className="grid grid-cols-3 gap-3 border-t border-panel-border pt-4">
                 {[
-                  { icon: <Github size={14} />,   label: "Repos",     value: data?.public_repos || 12 },
-                  { icon: <Users size={14} />,     label: "Followers", value: data?.followers    || "—" },
-                  { icon: <GitFork size={14} />,   label: "Following", value: data?.following    || "—" },
+                  { icon: <Github size={14} />, label: "Repos", value: data ? data.public_repos : 12 },
+                  { icon: <Users size={14} />, label: "Followers", value: data ? data.followers : "—" },
+                  { icon: <GitFork size={14} />, label: "Following", value: data ? data.following : "—" },
                 ].map((s) => (
                   <div key={s.label} className="text-center">
                     <div className="flex justify-center text-signal-cyan">{s.icon}</div>
@@ -137,10 +152,16 @@ export function GitHubStats() {
                   </div>
                 </div>
               )}
+
+              {fetchFailed && (
+                <div className="border-t border-panel-border pt-3 font-mono text-[10px] text-ink-faint">
+                  Live stats unavailable — showing placeholders.
+                </div>
+              )}
             </motion.div>
           </Reveal>
 
-          {/* ── Streak Stats (demolab — works reliably) ── */}
+          {/* ── Streak Stats (demolab) ── */}
           <Reveal delay={0.12}>
             <motion.div
               whileHover={{ y: -4 }}
@@ -167,12 +188,8 @@ export function GitHubStats() {
                   transition={{ duration: 0.5, delay: i * 0.07 }}
                   className="rounded-xl border border-panel-border bg-panel/30 p-4 text-center backdrop-blur-sm"
                 >
-                  <div className={`font-display text-2xl font-bold sm:text-3xl ${stat.color}`}>
-                    {stat.value}
-                  </div>
-                  <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-faint">
-                    {stat.label}
-                  </div>
+                  <div className={`font-display text-2xl font-bold sm:text-3xl ${stat.color}`}>{stat.value}</div>
+                  <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-faint">{stat.label}</div>
                 </motion.div>
               ))}
             </div>
@@ -190,6 +207,11 @@ export function GitHubStats() {
               alt="Activity Graph"
               className="w-full rounded-xl"
               loading="lazy"
+              onError={(e) => {
+                // fall back to the github-readme-stats variant if activity-graph is down
+                (e.currentTarget as HTMLImageElement).src =
+                  `https://github-readme-streak-stats.herokuapp.com/?user=${GITHUB_USER}&theme=tokyonight`;
+              }}
             />
           </motion.div>
         </Reveal>
