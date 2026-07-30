@@ -6,7 +6,14 @@ const SITHIJA_CONTEXT = `You are NEXUS (Neural EXpert Understanding System) — 
 
 NEVER say you are Claude, Gemini, GPT, or any other AI. You are NEXUS.
 Keep responses concise (2-4 sentences). Use gaming/tech references naturally.
-CRITICAL: If user writes in Sinhala, ALWAYS reply in Sinhala ONLY.
+
+LANGUAGE RULES — CRITICAL:
+- Sinhala (සිංහල characters) → Reply in Sinhala ONLY
+- Japanese (日本語 characters ひらがな カタカナ 漢字) → Reply in Japanese ONLY
+- Singlish (Sinhala words in English letters: "mama", "oya", "kohomada", "innawa", "karanna", "kiyala", "hadanawa", "wage", "ekai", "api", "mokakda", "dan", "harida", "neme") → Reply in same Singlish style
+- English → Reply in English
+Always detect and match the user's language/style exactly.
+
 When user asks about a specific social media, give ONLY that one. Don't dump all links.
 When user asks about contact, ask which method they prefer first.
 
@@ -44,22 +51,39 @@ function isSinhala(text: string): boolean {
   return /[\u0D80-\u0DFF]/.test(text);
 }
 
+function isJapanese(text: string): boolean {
+  return /[\u3040-\u30FF\u4E00-\u9FFF]/.test(text);
+}
+
+function isSinglish(text: string): boolean {
+  const words = ["mama","oya","kohomada","innawa","karanna","kiyala","hadanawa","wage","ekai","api","mokakda","dan","harida","neme","thiyenawa","wenawa","balanna","denna","ganna","yanawa","enawa","karanawa","pennawa","puluwan"];
+  const lower = text.toLowerCase();
+  return words.filter(w => lower.includes(w)).length >= 2;
+}
+
 function getFallbackResponse(message: string, prevAIMessage = ""): { text: string; action: string | null; emailLink?: string } {
   const msg = message.toLowerCase();
   const si  = isSinhala(message);
 
-  // ── Email compose: detect "Name — message" pattern after AI asked ──
-  const emailPattern = /^(.+?)\s*[—\-–]\s*(.+)$/;
+  // ── Email compose: detect name + message pattern after AI asked ───────────
+  // Supports: "John — message", "John, message", "John: message", "John | message"
+  const emailPattern = /^([A-Za-z\s]{2,40})\s*[—\-–,:|]\s*(.{5,})$/;
   const emailMatch   = message.match(emailPattern);
-  if (emailMatch && (prevAIMessage.includes("email") || prevAIMessage.includes("ඊමේල්") || prevAIMessage.includes("නම") || prevAIMessage.includes("name"))) {
+  const prevLower    = prevAIMessage.toLowerCase();
+  const isEmailContext = prevLower.includes("email") || prevLower.includes("ඊමේල්") ||
+                         prevLower.includes("name") || prevLower.includes("නම") ||
+                         prevLower.includes("type your") || prevLower.includes("tell me your") ||
+                         prevLower.includes("example:") || prevLower.includes("_example");
+
+  if (emailMatch && isEmailContext) {
     const [, name, body] = emailMatch;
-    const subject    = encodeURIComponent(`Message from ${name.trim()}`);
-    const emailBody  = encodeURIComponent(`Hi Sithija,\n\n${body.trim()}\n\nBest regards,\n${name.trim()}`);
-    const emailLink  = `mailto:sithijakalhara2@gmail.com?subject=${subject}&body=${emailBody}`;
+    const subject   = encodeURIComponent(`Message from ${name.trim()}`);
+    const emailBody = encodeURIComponent(`Hi Sithija,\n\n${body.trim()}\n\nBest regards,\n${name.trim()}`);
+    const emailLink = `mailto:sithijakalhara2@gmail.com?subject=${subject}&body=${emailBody}`;
     return {
       text: si
-        ? `✅ Email ready! **${name.trim()}** ගෙන් message:\n_"${body.trim()}"_\n\nපහළ button click කරලා send කරන්න! 📧`
-        : `✅ Email ready from **${name.trim()}**:\n_"${body.trim()}"_\n\nClick the button below to send! 📧`,
+        ? `✅ Email ready! **${name.trim()}** ගෙන් message:\n_"${body.trim()}"_\n\nGmail open වෙනවා — send කරන්න! 📧`
+        : `✅ Email composed from **${name.trim()}**:\n_"${body.trim()}"_\n\nYour email app will open — hit send! 📧`,
       action: null,
       emailLink,
     };
@@ -87,8 +111,7 @@ function getFallbackResponse(message: string, prevAIMessage = ""): { text: strin
       return { text: "WhatsApp: **+94712058956**\n👉 https://wa.me/94712058956", action: "contact" };
     if (msg.includes("email") || message.includes("ඊමේල්") || message.includes("මේල්"))
       return { text: "📧 Sithija ට email යවන්නද?\n\nඔව් නම් — ඔයාගේ **නම** සහ **message** type කරන්න:\n\n_example: John — Hi Sithija, website ekak hadanna ona_", action: null };
-    if (message.includes("සම්බන්ධ") || message.includes("කතා") || msg.includes("contact") || msg.includes("hire") || msg.includes("reach") || msg.includes("connect") || msg.includes("available")
-      || msg.includes("කතා කරන්න") || msg.includes("hire කරන්න") || msg.includes("connect වෙන්න") || msg.includes("reach වෙන්න"))
+    if (message.includes("සම්බන්ධ") || message.includes("කතා") || msg.includes("contact") || msg.includes("hire"))
       return { text: "Sithija හා contact කරන්නේ කොහොමද?\n\n📞 Call — +94712058956\n📧 Email — sithijakalhara2@gmail.com\n💬 WhatsApp\n💼 LinkedIn\n\nඕන ක්‍රමය කියන්න!", action: null };
     if (message.includes("project") || message.includes("ව්‍යාපෘති") || message.includes("eyerone"))
       return { text: "ප්‍රධාන project: **Eyerone.com** — ඔහු තනිවම හැදූ social media & live streaming platform! HLS, gifts, EyeCoin/Stripe, passkey auth. Epic! 🚀", action: "projects" };
@@ -120,6 +143,9 @@ function getFallbackResponse(message: string, prevAIMessage = ""): { text: strin
     return { text: "Instagram: **@sithija_kalhara2**\n👉 https://www.instagram.com/sithija_kalhara2/", action: null };
   if (msg.includes("whatsapp"))
     return { text: "WhatsApp: **+94712058956**\n👉 https://wa.me/94712058956", action: "contact" };
+  // Smart: detect "name, call me" or "name, contact me" intent
+  if (msg.includes("call me") || msg.includes("call him") || (msg.includes("call") && msg.length < 40))
+    return { text: "📞 Call Sithija directly: **+94712058956**\nor tap: [tel:+94712058956](tel:+94712058956)", action: "contact" };
   if (msg.includes("email"))
     return { text: "📧 Want to send Sithija an email?\n\nType your **name** and **message**:\n\n_example: John — Hi Sithija, I need a website built_", action: null };
   if (msg.includes("contact") || msg.includes("hire") || msg.includes("reach") || msg.includes("connect"))
@@ -149,7 +175,16 @@ export async function POST(req: NextRequest) {
     const lastContent  = messages[messages.length - 1]?.content || "";
     const prevAIMsg    = messages.length >= 2 ? messages[messages.length - 2]?.content || "" : "";
     const isSi         = lang === "si" || isSinhala(lastContent);
-    const siInstruction = isSi ? "\n\nIMPORTANT: User is writing in Sinhala. Reply ONLY in Sinhala (සිංහල)." : "";
+    const isJp         = isJapanese(lastContent);
+    const isSgl        = !isSi && !isJp && isSinglish(lastContent);
+
+    const langInstruction = isSi
+      ? "\n\nCRITICAL: User wrote in Sinhala. Reply ONLY in Sinhala (සිංහල)."
+      : isJp
+      ? "\n\nCRITICAL: User wrote in Japanese. Reply ONLY in Japanese (日本語)."
+      : isSgl
+      ? "\n\nCRITICAL: User wrote in Singlish (Sinhala words in English letters). Reply in the same casual Singlish style."
+      : "";
 
     if (!GEMINI_API_KEY) {
       return NextResponse.json(getFallbackResponse(lastContent, prevAIMsg));
@@ -167,13 +202,17 @@ export async function POST(req: NextRequest) {
     }));
 
     const userContent = isSi
-      ? `[User is writing in Sinhala. Reply ONLY in Sinhala/සිංහල]\n${lastMessage.content}`
+      ? `[Sinhala message - reply in Sinhala ONLY]: ${lastMessage.content}`
+      : isJp
+      ? `[Japanese message - reply in Japanese ONLY]: ${lastMessage.content}`
+      : isSgl
+      ? `[Singlish message - reply in same Singlish style]: ${lastMessage.content}`
       : lastMessage.content;
 
     for (const GEMINI_URL of urls) {
       try {
         const body = {
-          system_instruction: { parts: [{ text: SITHIJA_CONTEXT + siInstruction }] },
+          system_instruction: { parts: [{ text: SITHIJA_CONTEXT + langInstruction }] },
           contents: [...history, { role: "user", parts: [{ text: userContent }] }],
           generationConfig: { temperature: 0.8, maxOutputTokens: 300, topP: 0.9 },
           safetySettings: [
