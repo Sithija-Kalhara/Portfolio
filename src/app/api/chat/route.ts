@@ -87,7 +87,8 @@ function getFallbackResponse(message: string, prevAIMessage = ""): { text: strin
       return { text: "WhatsApp: **+94712058956**\n👉 https://wa.me/94712058956", action: "contact" };
     if (msg.includes("email") || message.includes("ඊමේල්") || message.includes("මේල්"))
       return { text: "📧 Sithija ට email යවන්නද?\n\nඔව් නම් — ඔයාගේ **නම** සහ **message** type කරන්න:\n\n_example: John — Hi Sithija, website ekak hadanna ona_", action: null };
-    if (message.includes("සම්බන්ධ") || message.includes("කතා") || msg.includes("contact") || msg.includes("hire"))
+    if (message.includes("සම්බන්ධ") || message.includes("කතා") || msg.includes("contact") || msg.includes("hire") || msg.includes("reach") || msg.includes("connect") || msg.includes("available")
+      || msg.includes("කතා කරන්න") || msg.includes("hire කරන්න") || msg.includes("connect වෙන්න") || msg.includes("reach වෙන්න"))
       return { text: "Sithija හා contact කරන්නේ කොහොමද?\n\n📞 Call — +94712058956\n📧 Email — sithijakalhara2@gmail.com\n💬 WhatsApp\n💼 LinkedIn\n\nඕන ක්‍රමය කියන්න!", action: null };
     if (message.includes("project") || message.includes("ව්‍යාපෘති") || message.includes("eyerone"))
       return { text: "ප්‍රධාන project: **Eyerone.com** — ඔහු තනිවම හැදූ social media & live streaming platform! HLS, gifts, EyeCoin/Stripe, passkey auth. Epic! 🚀", action: "projects" };
