@@ -126,7 +126,34 @@ function getFallbackResponse(message: string, prevAIMessage = ""): { text: strin
     return { text: "හෙලෝ! මම **NEXUS**. Projects, tech stack, gaming, hire කරන හැටි — ඕනෑ දෙයක් අහන්න! 🎯", action: null };
   }
 
-  // ── English section ──────────────────────────────────────────────────
+  // ── Japanese section ─────────────────────────────────────────────────────
+  if (isJapanese(message)) {
+    if (msg.includes("social") || msg.includes("ソーシャル"))
+      return { text: "どのSNSをお探しですか？\n\n1️⃣ YouTube\n2️⃣ TikTok\n3️⃣ LinkedIn\n4️⃣ GitHub\n5️⃣ Facebook\n6️⃣ Instagram\n\n見たいものを教えてください！", action: null };
+    if (msg.includes("youtube") || message.includes("ユーチューブ"))
+      return { text: "YouTube: **@mrflexy1** 🎮\n👉 https://www.youtube.com/@mrflexy1\nゲームコンテンツ配信中！", action: "stream" };
+    if (msg.includes("tiktok") || message.includes("ティックトック"))
+      return { text: "TikTok: **@mr._.flexy**\n👉 https://www.tiktok.com/@mr._.flexy\nフォロワー2,388人！", action: null };
+    if (msg.includes("linkedin") || message.includes("リンクドイン"))
+      return { text: "LinkedIn:\n👉 https://www.linkedin.com/in/sithija-kalhara/", action: null };
+    if (msg.includes("github") || message.includes("ギットハブ"))
+      return { text: "GitHub: **Sithija-Kalhara** 💻\n👉 https://github.com/Sithija-Kalhara", action: "stats" };
+    if (msg.includes("contact") || msg.includes("hire") || message.includes("連絡") || message.includes("採用"))
+      return { text: "シティジャへの連絡方法は？\n\n📞 電話 — +94712058956\n📧 メール — sithijakalhara2@gmail.com\n💬 WhatsApp\n💼 LinkedIn\n\nご希望の方法をお選びください！", action: null };
+    if (msg.includes("email") || message.includes("メール"))
+      return { text: "📧 シティジャにメールを送りますか？\n\nお名前とメッセージを入力してください：\n\n_例: 田中 — こんにちは、ウェブサイトを作りたいです_", action: null };
+    if (msg.includes("project") || message.includes("プロジェクト") || message.includes("eyerone"))
+      return { text: "主なプロジェクト: **Eyerone.com** — ソーシャルメディア & ライブ配信プラットフォームを一人で構築！HLS, ギフトシステム, EyeCoin決済, パスキー認証。🚀", action: "projects" };
+    if (msg.includes("skill") || msg.includes("tech") || message.includes("スキル") || message.includes("技術"))
+      return { text: "技術スタック: **React 95%, Next.js 92%, Node.js 90%, TypeScript 88%**、MongoDB、Three.js、Cloudflare、Docker、AI統合（Claude, OpenAI, Gemini）! 🔥", action: "stack" };
+    if (msg.includes("about") || msg.includes("who") || message.includes("誰") || message.includes("シティジャ") || message.includes("sithija"))
+      return { text: "**シティジャ・カルハラ** — スリランカ出身、日本（小山市）在住のフルスタック開発者。Eyeroneの創設者、AIを学ぶ学生、Mr. Flexyとしてゲーム配信者。2019年からコーディング！💪", action: "about" };
+    if (msg.includes("nexus") || message.includes("あなたは誰") || message.includes("何者"))
+      return { text: "私は**NEXUS** — シティジャ・カルハラのAIアシスタントです！スキル、プロジェクト、経験について何でも聞いてください。🤖⚡", action: null };
+    if (msg.includes("experience") || message.includes("経験") || message.includes("学歴"))
+      return { text: "2019年から独学でコーディング開始、2023年にEyeroneを設立、現在は日本の**中央AI専門学校**でAIを学んでいます！💪", action: "experience" };
+    return { text: "こんにちは！私は**NEXUS**、シティジャのAIアシスタントです。プロジェクト、技術スタック、ゲーム配信、採用について何でも聞いてください！🎯", action: null };
+  }
   if (msg.includes("social media") || msg.includes("social account") || msg.includes("all social"))
     return { text: "Which social media would you like?\n\n1️⃣ YouTube\n2️⃣ TikTok\n3️⃣ LinkedIn\n4️⃣ GitHub\n5️⃣ Facebook\n6️⃣ Instagram\n\nType the one you want!", action: null };
   if (msg.includes("youtube"))
