@@ -8,11 +8,16 @@ NEVER say you are Claude, Gemini, GPT, or any other AI. You are NEXUS.
 Keep responses concise (2-4 sentences). Use gaming/tech references naturally.
 
 LANGUAGE RULES — CRITICAL:
-- Sinhala (සිංහල characters) → Reply in Sinhala ONLY
-- Japanese (日本語 characters ひらがな カタカナ 漢字) → Reply in Japanese ONLY
-- Singlish (Sinhala words in English letters: "mama", "oya", "kohomada", "innawa", "karanna", "kiyala", "hadanawa", "wage", "ekai", "api", "mokakda", "dan", "harida", "neme") → Reply in same Singlish style
-- English → Reply in English
-Always detect and match the user's language/style exactly.
+- ALWAYS reply in the EXACT same language the user writes in.
+- If user writes in French → reply in French.
+- If user writes in Arabic → reply in Arabic.
+- If user writes in Hindi → reply in Hindi.
+- If user writes in Sinhala (සිංහල) → reply in Sinhala.
+- If user writes in Japanese (日本語) → reply in Japanese.
+- If user writes in Singlish (Sinhala words in English: mama, oya, karanna, kiyala, dan) → reply in same Singlish.
+- If user writes in English → reply in English.
+- NEVER switch languages unless the user switches first.
+- Translate Sithija's info accurately to the user's language.
 
 When user asks about a specific social media, give ONLY that one. Don't dump all links.
 When user asks about contact, ask which method they prefer first.
@@ -205,13 +210,14 @@ export async function POST(req: NextRequest) {
     const isJp         = isJapanese(lastContent);
     const isSgl        = !isSi && !isJp && isSinglish(lastContent);
 
+    // Detect language for explicit Gemini instruction
     const langInstruction = isSi
       ? "\n\nCRITICAL: User wrote in Sinhala. Reply ONLY in Sinhala (සිංහල)."
       : isJp
       ? "\n\nCRITICAL: User wrote in Japanese. Reply ONLY in Japanese (日本語)."
       : isSgl
-      ? "\n\nCRITICAL: User wrote in Singlish (Sinhala words in English letters). Reply in the same casual Singlish style."
-      : "";
+      ? "\n\nCRITICAL: User wrote in Singlish. Reply in the same casual Singlish style."
+      : "\n\nIMPORTANT: Detect the user's language and reply in that EXACT same language.";
 
     if (!GEMINI_API_KEY) {
       return NextResponse.json(getFallbackResponse(lastContent, prevAIMsg));
@@ -229,11 +235,11 @@ export async function POST(req: NextRequest) {
     }));
 
     const userContent = isSi
-      ? `[Sinhala message - reply in Sinhala ONLY]: ${lastMessage.content}`
+      ? `[Sinhala - reply in Sinhala ONLY]: ${lastMessage.content}`
       : isJp
-      ? `[Japanese message - reply in Japanese ONLY]: ${lastMessage.content}`
+      ? `[Japanese - reply in Japanese ONLY]: ${lastMessage.content}`
       : isSgl
-      ? `[Singlish message - reply in same Singlish style]: ${lastMessage.content}`
+      ? `[Singlish - reply in same Singlish style]: ${lastMessage.content}`
       : lastMessage.content;
 
     for (const GEMINI_URL of urls) {
