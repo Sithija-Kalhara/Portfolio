@@ -57,7 +57,6 @@ export async function GET() {
       },
       {
         headers: {
-          // Browser සහ Cloudflare Caching වැළැක්වීමට
           "Cache-Control": "no-store, max-age=0",
         },
       }
