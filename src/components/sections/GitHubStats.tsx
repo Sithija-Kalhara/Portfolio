@@ -2,11 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Github, Star, GitFork, Users } from "lucide-react";
+import { Github, Flame, Trophy, GitFork, Users } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionTag } from "@/components/ui/SectionTag";
 
 const GITHUB_USER = "Sithija-Kalhara";
+
+type ContributionDay = { date: string; count: number };
+type ContributionWeek = { days: ContributionDay[] };
+type Contributions = {
+  total: number;
+  currentStreak: number;
+  longestStreak: number;
+  maxCount: number;
+  weeks: ContributionWeek[];
+};
 
 type GitHubData = {
   name: string;
@@ -16,6 +26,7 @@ type GitHubData = {
   following: number;
   public_repos: number;
   topLangs: { lang: string; count: number }[];
+  contributions: Contributions | null;
 };
 
 const LANG_COLORS: Record<string, string> = {
@@ -27,6 +38,39 @@ const LANG_COLORS: Record<string, string> = {
   Shell: "#89e051",
   "Jupyter Notebook": "#da5b0b",
 };
+
+// Same 5-bucket shading GitHub itself uses, tinted to the site's cyan/violet palette.
+const LEVEL_COLORS = ["#181822", "#123b3f", "#0e5c63", "#0891a8", "#00f0ff"];
+
+function levelFor(count: number, max: number) {
+  if (count === 0) return 0;
+  const q = Math.max(1, max / 4);
+  if (count <= q) return 1;
+  if (count <= q * 2) return 2;
+  if (count <= q * 3) return 3;
+  return 4;
+}
+
+function ContributionHeatmap({ data }: { data: Contributions }) {
+  return (
+    <div className="overflow-x-auto pb-1">
+      <div className="flex gap-[3px]">
+        {data.weeks.map((week, wi) => (
+          <div key={wi} className="flex flex-col gap-[3px]">
+            {week.days.map((day) => (
+              <div
+                key={day.date}
+                title={`${day.date}: ${day.count} contribution${day.count === 1 ? "" : "s"}`}
+                className="h-[10px] w-[10px] rounded-[2px]"
+                style={{ backgroundColor: LEVEL_COLORS[levelFor(day.count, data.maxCount)] }}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function GitHubStats() {
   const [data, setData] = useState<GitHubData | null>(null);
@@ -161,18 +205,52 @@ export function GitHubStats() {
             </motion.div>
           </Reveal>
 
-          {/* ── Streak Stats (demolab) ── */}
+          {/* ── Streak Stats (self-hosted, from our own /api/github) ── */}
           <Reveal delay={0.12}>
             <motion.div
               whileHover={{ y: -4 }}
-              className="overflow-hidden rounded-2xl border border-panel-border bg-panel/30 p-1 backdrop-blur-sm transition-all hover:border-signal-crimson/40 hover:shadow-glow-crimson"
+              className="flex h-full flex-col justify-center gap-4 rounded-2xl border border-panel-border bg-panel/30 p-6 backdrop-blur-sm transition-all hover:border-signal-crimson/40 hover:shadow-glow-crimson"
             >
-              <img
-                src={`https://streak-stats.demolab.com?user=${GITHUB_USER}&theme=tokyonight-duo&background=0d0d14&border=1f1f2b&stroke=7c3aed&ring=00f0ff&fire=ff1f4f&currStreakNum=e8e8f0&sideNums=e8e8f0&currStreakLabel=00f0ff&sideLabels=9494a8&dates=5c5c6e`}
-                alt="GitHub Streak"
-                className="w-full rounded-xl"
-                loading="lazy"
-              />
+              {data?.contributions ? (
+                <>
+                  <div className="text-center">
+                    <div className="font-display text-3xl font-bold text-ink">
+                      {data.contributions.total.toLocaleString()}
+                    </div>
+                    <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-faint">
+                      Contributions (past year)
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 border-t border-panel-border pt-4">
+                    <div className="text-center">
+                      <div className="flex justify-center text-signal-crimson">
+                        <Flame size={16} />
+                      </div>
+                      <div className="mt-1 font-display text-lg font-bold text-ink">
+                        {data.contributions.currentStreak}
+                      </div>
+                      <div className="font-mono text-[9px] uppercase tracking-wider text-ink-faint">
+                        Current Streak
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex justify-center text-signal-cyan">
+                        <Trophy size={16} />
+                      </div>
+                      <div className="mt-1 font-display text-lg font-bold text-ink">
+                        {data.contributions.longestStreak}
+                      </div>
+                      <div className="font-mono text-[9px] uppercase tracking-wider text-ink-faint">
+                        Longest Streak
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center font-mono text-[10px] text-ink-faint">
+                  Streak data unavailable.
+                </div>
+              )}
             </motion.div>
           </Reveal>
 
@@ -196,23 +274,22 @@ export function GitHubStats() {
           </Reveal>
         </div>
 
-        {/* Activity Graph — full width */}
+        {/* Activity Graph — full width, self-hosted heatmap */}
         <Reveal delay={0.2} className="mt-5">
           <motion.div
             whileHover={{ y: -2 }}
-            className="overflow-hidden rounded-2xl border border-panel-border bg-panel/30 p-1 backdrop-blur-sm transition-all hover:border-signal-violet/30"
+            className="overflow-hidden rounded-2xl border border-panel-border bg-panel/30 p-5 backdrop-blur-sm transition-all hover:border-signal-violet/30"
           >
-            <img
-              src={`https://github-readme-activity-graph.vercel.app/graph?username=${GITHUB_USER}&bg_color=0d0d14&color=00f0ff&line=7c3aed&point=a855f7&area=true&area_color=7c3aed&hide_border=true&custom_title=Sithija%20Kalhara%20%E2%80%94%20Contribution%20Activity`}
-              alt="Activity Graph"
-              className="w-full rounded-xl"
-              loading="lazy"
-              onError={(e) => {
-                // fall back to the github-readme-stats variant if activity-graph is down
-                (e.currentTarget as HTMLImageElement).src =
-                  `https://github-readme-streak-stats.herokuapp.com/?user=${GITHUB_USER}&theme=tokyonight`;
-              }}
-            />
+            <div className="mb-3 font-mono text-[10px] uppercase tracking-wider text-ink-faint">
+              Contribution Activity
+            </div>
+            {data?.contributions ? (
+              <ContributionHeatmap data={data.contributions} />
+            ) : (
+              <div className="font-mono text-[10px] text-ink-faint">
+                {fetchFailed ? "Live stats unavailable." : "Loading…"}
+              </div>
+            )}
           </motion.div>
         </Reveal>
       </div>
