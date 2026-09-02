@@ -24,6 +24,21 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Handles both the desktop links and the mobile dropdown links. We close
+  // the mobile menu first, then scroll on the next frame — doing the
+  // native <a> hash-jump and the menu's closing animation at the exact same
+  // instant is what was making taps in the mobile dropdown feel like they
+  // did nothing.
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (!href.startsWith("#")) return;
+    e.preventDefault();
+    setOpen(false);
+    requestAnimationFrame(() => {
+      document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.history.pushState(null, "", href);
+    });
+  };
+
   return (
     <header
       className={cn(
@@ -48,6 +63,7 @@ export function Navbar() {
             <a
               key={link.href}
               href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
               className="group relative font-mono text-[12px] uppercase tracking-[0.18em] text-ink-dim transition-colors hover:text-ink"
             >
               {link.label}
@@ -58,6 +74,7 @@ export function Navbar() {
 
         <a
           href="#contact"
+          onClick={(e) => handleNavClick(e, "#contact")}
           className="hidden items-center gap-2 rounded-full border border-panel-border bg-panel/60 px-5 py-2 font-mono text-[12px] uppercase tracking-[0.15em] text-ink transition-all hover:border-signal-cyan/50 hover:text-signal-cyan lg:flex"
         >
           <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-signal-crimson" />
@@ -87,7 +104,7 @@ export function Navbar() {
                 <a
                   key={link.href}
                   href={link.href}
-                  onClick={() => setOpen(false)}
+                  onClick={(e) => handleNavClick(e, link.href)}
                   className="rounded-lg px-3 py-3 font-mono text-sm uppercase tracking-[0.15em] text-ink-dim transition-colors hover:bg-panel hover:text-ink"
                 >
                   {link.label}
@@ -95,7 +112,7 @@ export function Navbar() {
               ))}
               <a
                 href="#contact"
-                onClick={() => setOpen(false)}
+                onClick={(e) => handleNavClick(e, "#contact")}
                 className="mt-2 flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 font-mono text-[12px] uppercase tracking-[0.15em] text-void"
               >
                 Let&apos;s Talk

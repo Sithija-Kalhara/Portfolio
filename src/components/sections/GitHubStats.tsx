@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Github, Flame, Trophy, GitFork, Users } from "lucide-react";
+import { Github, Flame, GitFork, Users } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionTag } from "@/components/ui/SectionTag";
 
@@ -15,6 +15,12 @@ type Contributions = {
   total: number;
   currentStreak: number;
   longestStreak: number;
+  currentStreakStart: string;
+  currentStreakEnd: string;
+  longestStreakStart: string;
+  longestStreakEnd: string;
+  firstDate: string;
+  lastDate: string;
   maxCount: number;
   weeks: ContributionWeek[];
 };
@@ -73,6 +79,101 @@ function ContributionHeatmap({ data }: { data: Contributions }) {
   );
 }
 
+const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function formatShort(dateStr: string, withYear = false) {
+  if (!dateStr) return "";
+  const d = new Date(`${dateStr}T00:00:00`);
+  const label = `${MONTH_LABELS[d.getMonth()]} ${d.getDate()}`;
+  return withYear ? `${label}, ${d.getFullYear()}` : label;
+}
+
+function formatRange(start: string, end: string) {
+  if (!start || !end) return "";
+  return start === end ? formatShort(start) : `${formatShort(start)} - ${formatShort(end)}`;
+}
+
+// Rolls the daily contribution calendar up into the last 12 calendar months,
+// oldest first, so the bar chart reads left-to-right like a timeline.
+function monthlyTotals(data: Contributions) {
+  const totals = new Map<string, number>();
+  for (const week of data.weeks) {
+    for (const day of week.days) {
+      const d = new Date(day.date);
+      const key = `${d.getFullYear()}-${d.getMonth()}`;
+      totals.set(key, (totals.get(key) || 0) + day.count);
+    }
+  }
+  const now = new Date();
+  const months: { key: string; label: string; total: number }[] = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${d.getMonth()}`;
+    months.push({ key, label: MONTH_LABELS[d.getMonth()], total: totals.get(key) || 0 });
+  }
+  return months;
+}
+
+function StreakRing({ value, pct }: { value: number; pct: number }) {
+  const r = 42;
+  const circumference = 2 * Math.PI * r;
+  const clamped = Math.min(1, Math.max(0, pct));
+
+  return (
+    <div className="relative flex h-28 w-28 items-center justify-center">
+      <svg viewBox="0 0 100 100" className="h-28 w-28 -rotate-90">
+        <circle cx="50" cy="50" r={r} fill="none" strokeWidth="6" className="stroke-panel-border" />
+        <motion.circle
+          cx="50"
+          cy="50"
+          r={r}
+          fill="none"
+          stroke="#0891a8"
+          strokeWidth="6"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          initial={{ strokeDashoffset: circumference }}
+          whileInView={{ strokeDashoffset: circumference * (1 - clamped) }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease: "easeOut" }}
+        />
+      </svg>
+      <div className="absolute flex flex-col items-center gap-1">
+        <Flame size={16} className="text-signal-crimson" />
+        <div className="font-display text-2xl font-bold text-ink">{value}</div>
+      </div>
+    </div>
+  );
+}
+
+function MonthlyActivityChart({ data }: { data: Contributions }) {
+  const months = monthlyTotals(data);
+  const max = Math.max(1, ...months.map((m) => m.total));
+
+  return (
+    <div className="flex h-full flex-col">
+      <div className="mb-1 font-mono text-[10px] uppercase tracking-wider text-ink-faint">
+        Monthly Activity
+      </div>
+      <div className="flex flex-1 items-end gap-[6px] pt-2">
+        {months.map((m, i) => (
+          <div key={m.key} className="flex flex-1 flex-col items-center gap-1.5">
+            <motion.div
+              className="w-full rounded-t-sm bg-gradient-to-t from-signal-cyan/40 to-signal-cyan"
+              title={`${m.label}: ${m.total} contribution${m.total === 1 ? "" : "s"}`}
+              initial={{ height: 0 }}
+              whileInView={{ height: `${Math.max(4, (m.total / max) * 72)}px` }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: i * 0.03, ease: "easeOut" }}
+            />
+            <div className="font-mono text-[8px] uppercase tracking-wider text-ink-faint">{m.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function GitHubStats() {
   const [data, setData] = useState<GitHubData | null>(null);
   const [fetchFailed, setFetchFailed] = useState(false);
@@ -106,14 +207,6 @@ export function GitHubStats() {
   // Fetch itself succeeded but the API returned contributions: null — this only
   // happens when GITHUB_TOKEN isn't configured server-side (see route.ts).
   const contributionsUnavailable = loaded && data && !data.contributions;
-
-  // Use ?? so a real value of 0 (e.g. 0 followers) isn't hidden behind the placeholder.
-  const quickStats = [
-    { label: "Public Repos", value: data ? `${data.public_repos}+` : "12+", color: "text-signal-cyan" },
-    { label: "Followers", value: data ? `${data.followers}` : "—", color: "text-signal-violet-light" },
-    { label: "Years Coding", value: "5+", color: "text-emerald-400" },
-    { label: "Top Language", value: data?.topLangs?.[0]?.lang || "JS/TS", color: "text-signal-crimson" },
-  ];
 
   return (
     <section id="stats" className="relative py-28 lg:py-36">
@@ -149,8 +242,13 @@ export function GitHubStats() {
                   </div>
                 )}
                 <div>
-                  <div className="font-display text-base font-semibold text-ink">
-                    {data?.name || "Sithija Kalhara"}
+                  <div className="flex items-center gap-2">
+                    <div className="font-display text-base font-semibold text-ink">
+                      {data?.name || "Sithija Kalhara"}
+                    </div>
+                    <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-emerald-400">
+                      5+ yrs
+                    </span>
                   </div>
                   <a
                     href={`https://github.com/${GITHUB_USER}`}
@@ -222,68 +320,67 @@ export function GitHubStats() {
           <Reveal delay={0.12}>
             <motion.div
               whileHover={{ y: -4 }}
-              className="flex h-full flex-col justify-center gap-4 rounded-2xl border border-panel-border bg-panel/30 p-6 backdrop-blur-sm transition-all hover:border-signal-crimson/40 hover:shadow-glow-crimson"
+              className="flex h-full flex-col justify-center rounded-2xl border border-panel-border bg-panel/30 p-6 backdrop-blur-sm transition-all hover:border-signal-crimson/40 hover:shadow-glow-crimson"
             >
               {data?.contributions ? (
-                <>
+                <div className="grid grid-cols-3 items-center divide-x divide-panel-border">
                   <div className="text-center">
-                    <div className="font-display text-3xl font-bold text-ink">
+                    <div className="font-display text-2xl font-bold text-ink sm:text-3xl">
                       {data.contributions.total.toLocaleString()}
                     </div>
-                    <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-faint">
-                      Contributions (past year)
+                    <div className="mt-1.5 text-xs text-ink-dim">Total Contributions</div>
+                    <div className="mt-0.5 font-mono text-[10px] text-ink-faint">
+                      {formatShort(data.contributions.firstDate, true)} - Present
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-3 border-t border-panel-border pt-4">
-                    <div className="text-center">
-                      <div className="flex justify-center text-signal-crimson">
-                        <Flame size={16} />
-                      </div>
-                      <div className="mt-1 font-display text-lg font-bold text-ink">
-                        {data.contributions.currentStreak}
-                      </div>
-                      <div className="font-mono text-[9px] uppercase tracking-wider text-ink-faint">
-                        Current Streak
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="flex justify-center text-signal-cyan">
-                        <Trophy size={16} />
-                      </div>
-                      <div className="mt-1 font-display text-lg font-bold text-ink">
-                        {data.contributions.longestStreak}
-                      </div>
-                      <div className="font-mono text-[9px] uppercase tracking-wider text-ink-faint">
-                        Longest Streak
-                      </div>
+
+                  <div className="flex flex-col items-center gap-1.5 px-2">
+                    <StreakRing
+                      value={data.contributions.currentStreak}
+                      pct={
+                        data.contributions.longestStreak > 0
+                          ? data.contributions.currentStreak / data.contributions.longestStreak
+                          : 0
+                      }
+                    />
+                    <div className="text-xs font-semibold text-signal-crimson">Current Streak</div>
+                    <div className="font-mono text-[10px] text-ink-faint">
+                      {formatRange(data.contributions.currentStreakStart, data.contributions.currentStreakEnd)}
                     </div>
                   </div>
-                </>
+
+                  <div className="text-center">
+                    <div className="font-display text-2xl font-bold text-ink sm:text-3xl">
+                      {data.contributions.longestStreak}
+                    </div>
+                    <div className="mt-1.5 text-xs text-ink-dim">Longest Streak</div>
+                    <div className="mt-0.5 font-mono text-[10px] text-ink-faint">
+                      {formatRange(data.contributions.longestStreakStart, data.contributions.longestStreakEnd)}
+                    </div>
+                  </div>
+                </div>
               ) : (
                 <div className="text-center font-mono text-[10px] text-ink-faint">
-                  Streak data unavailable.
+                  {fetchFailed || contributionsUnavailable ? "Streak data unavailable." : "Loading…"}
                 </div>
               )}
             </motion.div>
           </Reveal>
 
-          {/* ── Quick Stats ── */}
+          {/* ── Monthly Activity Chart (replaces the old duplicate quick-stats grid) ── */}
           <Reveal delay={0.16}>
-            <div className="grid grid-cols-2 gap-4">
-              {quickStats.map((stat, i) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.07 }}
-                  className="rounded-xl border border-panel-border bg-panel/30 p-4 text-center backdrop-blur-sm"
-                >
-                  <div className={`font-display text-2xl font-bold sm:text-3xl ${stat.color}`}>{stat.value}</div>
-                  <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-faint">{stat.label}</div>
-                </motion.div>
-              ))}
-            </div>
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="flex h-full flex-col rounded-2xl border border-panel-border bg-panel/30 p-6 backdrop-blur-sm transition-all hover:border-signal-cyan/40 hover:shadow-glow-cyan"
+            >
+              {data?.contributions ? (
+                <MonthlyActivityChart data={data.contributions} />
+              ) : (
+                <div className="flex flex-1 items-center justify-center text-center font-mono text-[10px] text-ink-faint">
+                  {fetchFailed || contributionsUnavailable ? "Chart data unavailable." : "Loading…"}
+                </div>
+              )}
+            </motion.div>
           </Reveal>
         </div>
 

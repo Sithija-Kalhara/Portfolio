@@ -10,11 +10,20 @@ type ContributionDay = { date: string; count: number };
 
 function calcStreaks(days: ContributionDay[]) {
   let longest = 0;
+  let longestStart = "";
+  let longestEnd = "";
+  let tempStart = "";
   let temp = 0;
+
   for (const d of days) {
     if (d.count > 0) {
+      if (temp === 0) tempStart = d.date;
       temp++;
-      longest = Math.max(longest, temp);
+      if (temp > longest) {
+        longest = temp;
+        longestStart = tempStart;
+        longestEnd = d.date;
+      }
     } else {
       temp = 0;
     }
@@ -25,12 +34,15 @@ function calcStreaks(days: ContributionDay[]) {
   let idx = days.length - 1;
   if (idx >= 0 && days[idx].count === 0) idx--;
   let current = 0;
+  const currentEnd = idx >= 0 ? days[idx].date : "";
+  let currentStart = currentEnd;
   while (idx >= 0 && days[idx].count > 0) {
+    currentStart = days[idx].date;
     current++;
     idx--;
   }
 
-  return { current, longest };
+  return { current, longest, currentStart, currentEnd, longestStart, longestEnd };
 }
 
 export async function GET() {
@@ -78,6 +90,12 @@ export async function GET() {
       total: number;
       currentStreak: number;
       longestStreak: number;
+      currentStreakStart: string;
+      currentStreakEnd: string;
+      longestStreakStart: string;
+      longestStreakEnd: string;
+      firstDate: string;
+      lastDate: string;
       weeks: { days: ContributionDay[] }[];
       maxCount: number;
     } | null = null;
@@ -122,12 +140,18 @@ export async function GET() {
               w.contributionDays.map((d) => ({ date: d.date, count: d.contributionCount }))
           );
           const maxCount = Math.max(1, ...allDays.map((d) => d.count));
-          const { current, longest } = calcStreaks(allDays);
+          const { current, longest, currentStart, currentEnd, longestStart, longestEnd } = calcStreaks(allDays);
 
           contributions = {
             total: calendar.totalContributions,
             currentStreak: current,
             longestStreak: longest,
+            currentStreakStart: currentStart,
+            currentStreakEnd: currentEnd,
+            longestStreakStart: longestStart,
+            longestStreakEnd: longestEnd,
+            firstDate: allDays[0]?.date || "",
+            lastDate: allDays[allDays.length - 1]?.date || "",
             maxCount,
             weeks: calendar.weeks.map((w: { contributionDays: { date: string; contributionCount: number }[] }) => ({
               days: w.contributionDays.map((d) => ({ date: d.date, count: d.contributionCount })),

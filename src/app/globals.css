@@ -16,6 +16,13 @@ html {
   background-color: #05050a;
 }
 
+/* Fixed header is ~72-88px tall depending on breakpoint — this keeps anchor
+   jumps (nav links, "Scroll" hint, etc.) from landing a section title right
+   underneath it, on both desktop and the mobile dropdown menu. */
+section[id] {
+  scroll-margin-top: 96px;
+}
+
 body {
   background-color: #05050a;
   color: #e8e8f0;
