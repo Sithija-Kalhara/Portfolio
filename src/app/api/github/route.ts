@@ -33,17 +33,6 @@ function calcStreaks(days: ContributionDay[]) {
   return { current, longest };
 }
 
-// GitHub's own contribution-graph shading (5 buckets)
-function levelFor(count: number, max: number) {
-  if (count === 0) return 0;
-  if (max <= 4) return count >= max ? 4 : Math.ceil((count / max) * 4);
-  const q = max / 4;
-  if (count <= q) return 1;
-  if (count <= q * 2) return 2;
-  if (count <= q * 3) return 3;
-  return 4;
-}
-
 export async function GET() {
   const restHeaders: HeadersInit = {
     Accept: "application/vnd.github.v3+json",
@@ -170,8 +159,4 @@ export async function GET() {
   } catch (err) {
     return NextResponse.json({ error: "Failed to fetch GitHub data" }, { status: 500 });
   }
-}
-
-export function contributionLevel(count: number, max: number) {
-  return levelFor(count, max);
 }

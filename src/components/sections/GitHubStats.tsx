@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Github, Flame, Trophy, GitFork, Users } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
@@ -135,7 +136,13 @@ export function GitHubStats() {
             >
               <div className="flex items-center gap-3">
                 {data?.avatar ? (
-                  <img src={data.avatar} alt={data.name} className="h-12 w-12 rounded-full border border-panel-border" />
+                  <Image
+                    src={data.avatar}
+                    alt={data.name}
+                    width={48}
+                    height={48}
+                    className="h-12 w-12 rounded-full border border-panel-border"
+                  />
                 ) : (
                   <div className="flex h-12 w-12 items-center justify-center rounded-full border border-panel-border bg-panel">
                     <Github size={20} className="text-signal-violet-light" />
