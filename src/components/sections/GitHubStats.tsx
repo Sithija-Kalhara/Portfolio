@@ -75,6 +75,7 @@ function ContributionHeatmap({ data }: { data: Contributions }) {
 export function GitHubStats() {
   const [data, setData] = useState<GitHubData | null>(null);
   const [fetchFailed, setFetchFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     fetch("/api/github")
@@ -97,8 +98,13 @@ export function GitHubStats() {
       .catch((err) => {
         console.error("/api/github fetch threw:", err);
         setFetchFailed(true);
-      });
+      })
+      .finally(() => setLoaded(true));
   }, []);
+
+  // Fetch itself succeeded but the API returned contributions: null — this only
+  // happens when GITHUB_TOKEN isn't configured server-side (see route.ts).
+  const contributionsUnavailable = loaded && data && !data.contributions;
 
   // Use ?? so a real value of 0 (e.g. 0 followers) isn't hidden behind the placeholder.
   const quickStats = [
@@ -287,7 +293,7 @@ export function GitHubStats() {
               <ContributionHeatmap data={data.contributions} />
             ) : (
               <div className="font-mono text-[10px] text-ink-faint">
-                {fetchFailed ? "Live stats unavailable." : "Loading…"}
+                {fetchFailed || contributionsUnavailable ? "Live stats unavailable." : "Loading…"}
               </div>
             )}
           </motion.div>
