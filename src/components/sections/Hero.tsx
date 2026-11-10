@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight, Github, ChevronDown } from "lucide-react";
+import { ArrowUpRight, Github, ChevronDown, FileText } from "lucide-react";
 import { HeroSceneCanvas } from "@/components/three/HeroSceneCanvas";
 import { TypewriterRoles } from "@/components/ui/TypewriterRoles";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -86,6 +86,15 @@ export function Hero() {
             >
               View GitHub
             </MagneticButton>
+            {profile.resumeUrl && (
+              <MagneticButton
+                href={profile.resumeUrl}
+                variant="secondary"
+                icon={<FileText size={16} />}
+              >
+                Resume
+              </MagneticButton>
+            )}
           </motion.div>
 
           <motion.div
@@ -94,7 +103,7 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.6 }}
             className="mt-14 flex max-w-md items-center gap-6 border-t border-panel-border pt-6 font-mono text-[11px] uppercase tracking-[0.15em] text-ink-faint"
           >
-            <span>Sri Lanka</span>
+            <span>{profile.location}</span>
             <span className="h-3 w-px bg-panel-border" />
             <span>Full-Stack · AI · Streaming</span>
           </motion.div>

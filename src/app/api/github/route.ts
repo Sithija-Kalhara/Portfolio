@@ -72,9 +72,16 @@ export async function GET() {
     const user = await userRes.json();
     const repos = await reposRes.json();
 
+    // Markup / styling languages make "top languages" look thin — skip them.
+    const IGNORED_LANGS = new Set(["CSS", "SCSS", "HTML", "Batchfile"]);
     const langCount: Record<string, number> = {};
-    repos.forEach((r: { language?: string }) => {
-      if (r.language) langCount[r.language] = (langCount[r.language] || 0) + 1;
+    let stars = 0;
+    repos.forEach((r: { language?: string; stargazers_count?: number; fork?: boolean }) => {
+      if (r.fork) return;
+      stars += r.stargazers_count ?? 0;
+      if (r.language && !IGNORED_LANGS.has(r.language)) {
+        langCount[r.language] = (langCount[r.language] || 0) + 1;
+      }
     });
 
     const topLangs = Object.entries(langCount)
@@ -171,6 +178,8 @@ export async function GET() {
         followers: user.followers ?? 0,
         following: user.following ?? 0,
         public_repos: user.public_repos ?? 0,
+        stars,
+        languages: Object.keys(langCount).length,
         topLangs,
         contributions,
       },

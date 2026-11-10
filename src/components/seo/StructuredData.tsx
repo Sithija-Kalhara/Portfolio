@@ -16,7 +16,7 @@ export function StructuredData() {
       height: 630,
     },
     description:
-      "Sithija Kalhara is a Full-Stack Developer, Founder of Eyerone, AI Data Analyst, and Gaming Content Creator based in Sri Lanka. He specialises in React, Next.js, Node.js, Three.js, and scalable web platforms. Known online as Mr. Flexy, he creates gaming content on YouTube.",
+      "Sithija Kalhara is a Full-Stack Developer, Founder of Eyerone, AI Data Analyst, and Gaming Content Creator from Sri Lanka, based in Oyama, Japan. He specialises in React, Next.js, Node.js, Three.js, and scalable web platforms. Known online as Mr. Flexy, he creates gaming content on YouTube.",
     jobTitle: [
       "Full-Stack Developer",
       "AI Data Analyst",
@@ -26,7 +26,7 @@ export function StructuredData() {
     worksFor: {
       "@type": "Organization",
       name: "Eyerone",
-      url: "https://www.sithijakalhara.com",
+      url: "https://eyerone.com",
       founder: "Sithija Kalhara",
     },
     knowsAbout: [
@@ -42,6 +42,14 @@ export function StructuredData() {
       "Game Streaming",
       "3D Web Applications",
     ],
+    homeLocation: {
+      "@type": "Place",
+      name: "Oyama, Tochigi, Japan",
+    },
+    alumniOf: {
+      "@type": "CollegeOrUniversity",
+      name: "Chuo College of AI",
+    },
     nationality: {
       "@type": "Country",
       name: "Sri Lanka",

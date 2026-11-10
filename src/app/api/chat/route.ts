@@ -34,7 +34,7 @@ TECH: React 95%, Next.js 92%, Tailwind 94%, JS 96%, TS 88%, Three.js 80%, Node.j
 PROJECTS:
 1. Eyerone (eyerone.com) — ACTIVE — Solo-built social media + live streaming. Next.js, Node, MongoDB, Cloudflare R2, HLS, Stripe, passkey auth, Flicks
 2. sithijakalhara.com — Portfolio. Next.js 14, Three.js, Framer Motion, NEXUS AI
-3. Mr. Flexy — YouTube @mrflexy1, TikTok @mr._.flexy (2388 followers, 10.9K likes). Apex, Free Fire, CoC
+3. Mr. Flexy — YouTube @mrflexy1, TikTok @mr._.flexy. Apex, Free Fire, CoC
 4. CartoonLK (cartoonlk.com) | ZeylonJourney (zeylonjourney.com)
 
 SOCIAL LINKS:
@@ -97,13 +97,13 @@ function getFallbackResponse(message: string, prevAIMessage = ""): { text: strin
   // ── Sinhala section ──────────────────────────────────────────────────
   if (si) {
     if (message.includes("ගේමිං") || message.includes("ගේම්") || message.includes("ෆ්ලෙක්සි") || message.includes("ස්ට්‍රීම්") || message.includes("යූටියුබ්") || msg.includes("gaming") || msg.includes("flexy") || msg.includes("stream") || msg.includes("youtube"))
-      return { text: "**Mr. Flexy** විදිහට සිතිජ YouTube (@mrflexy1) සහ TikTok (@mr._.flexy) ේ Apex Legends, Free Fire, CoC stream කරනවා! 2.3K+ followers, bilingual content. GG! 🎮", action: "stream" };
+      return { text: "**Mr. Flexy** විදිහට සිතිජ YouTube (@mrflexy1) සහ TikTok (@mr._.flexy) ේ Apex Legends, Free Fire, CoC stream කරනවා! Bilingual content. GG! 🎮", action: "stream" };
     if (message.includes("සෝෂල්") || message.includes("සමාජ") || msg.includes("social"))
       return { text: "කවර social media account එකද ඕන?\n\n1️⃣ YouTube\n2️⃣ TikTok\n3️⃣ LinkedIn\n4️⃣ GitHub\n5️⃣ Facebook\n6️⃣ Instagram\n\nඕන එකේ නම type කරන්න!", action: null };
     if (msg.includes("youtube") || message.includes("යූටියුබ්"))
       return { text: "YouTube: **@mrflexy1** 🎮\n👉 https://www.youtube.com/@mrflexy1", action: "stream" };
     if (msg.includes("tiktok") || message.includes("ටික්ටොක්"))
-      return { text: "TikTok: **@mr._.flexy**\n👉 https://www.tiktok.com/@mr._.flexy\n2,388 followers, 10.9K likes!", action: null };
+      return { text: "TikTok: **@mr._.flexy**\n👉 https://www.tiktok.com/@mr._.flexy", action: null };
     if (msg.includes("linkedin") || message.includes("ලින්ක්ඩ්ඉන්"))
       return { text: "LinkedIn:\n👉 https://www.linkedin.com/in/sithija-kalhara/", action: null };
     if (msg.includes("github") || message.includes("ගිට්හබ්"))
@@ -138,7 +138,7 @@ function getFallbackResponse(message: string, prevAIMessage = ""): { text: strin
     if (msg.includes("youtube") || message.includes("ユーチューブ"))
       return { text: "YouTube: **@mrflexy1** 🎮\n👉 https://www.youtube.com/@mrflexy1\nゲームコンテンツ配信中！", action: "stream" };
     if (msg.includes("tiktok") || message.includes("ティックトック"))
-      return { text: "TikTok: **@mr._.flexy**\n👉 https://www.tiktok.com/@mr._.flexy\nフォロワー2,388人！", action: null };
+      return { text: "TikTok: **@mr._.flexy**\n👉 https://www.tiktok.com/@mr._.flexy", action: null };
     if (msg.includes("linkedin") || message.includes("リンクドイン"))
       return { text: "LinkedIn:\n👉 https://www.linkedin.com/in/sithija-kalhara/", action: null };
     if (msg.includes("github") || message.includes("ギットハブ"))
@@ -164,7 +164,7 @@ function getFallbackResponse(message: string, prevAIMessage = ""): { text: strin
   if (msg.includes("youtube"))
     return { text: "YouTube: **@mrflexy1** 🎮\n👉 https://www.youtube.com/@mrflexy1\nGaming content — Apex Legends, Free Fire, CoC!", action: "stream" };
   if (msg.includes("tiktok"))
-    return { text: "TikTok: **@mr._.flexy**\n👉 https://www.tiktok.com/@mr._.flexy\n2,388 followers, 10.9K likes!", action: null };
+    return { text: "TikTok: **@mr._.flexy**\n👉 https://www.tiktok.com/@mr._.flexy", action: null };
   if (msg.includes("linkedin"))
     return { text: "LinkedIn:\n👉 https://www.linkedin.com/in/sithija-kalhara/\nLet's connect!", action: null };
   if (msg.includes("github"))
@@ -189,11 +189,11 @@ function getFallbackResponse(message: string, prevAIMessage = ""): { text: strin
   if (msg.includes("skill") || msg.includes("tech") || msg.includes("stack"))
     return { text: "Sithija's stack 🔥 — **React 95%, Next.js 92%, Node.js 90%, TypeScript 88%**, MongoDB, Three.js, Cloudflare, Docker + AI APIs!", action: "stack" };
   if (msg.includes("gaming") || msg.includes("flexy") || msg.includes("stream"))
-    return { text: "As **Mr. Flexy** — YouTube @mrflexy1, TikTok @mr._.flexy (2.3K followers). Apex Legends, Free Fire, CoC. Bilingual Sinhala+English! 🎮", action: "stream" };
+    return { text: "As **Mr. Flexy** — YouTube @mrflexy1, TikTok @mr._.flexy. Apex Legends, Free Fire, CoC. Bilingual Sinhala+English! 🎮", action: "stream" };
   if (msg.includes("experience") || msg.includes("education") || msg.includes("chuo") || msg.includes("background"))
     return { text: "Coding since **2019** (self-taught), founded **Eyerone** in 2023, studying at **Chuo College of AI** in Japan now. From zero to full-stack founder! 💪", action: "experience" };
   if (msg.includes("github stats") || msg.includes("stats") || msg.includes("commit"))
-    return { text: "GitHub: 108+ contributions, 12+ repos, JavaScript/TypeScript top languages. Consistent shipper! 📊", action: "stats" };
+    return { text: "GitHub: @Sithija-Kalhara — live stats (repos, contributions, streaks) are on the GitHub section of this page. Consistent shipper! 📊", action: "stats" };
   if (msg.includes("about") || msg.includes("who") || msg.includes("sithija"))
     return { text: "**Sithija Kalhara** — Full-Stack Dev from Sri Lanka, based in Japan. Eyerone Founder, AI student, Mr. Flexy gaming creator. Coding since 2019! 💪", action: "about" };
   if (msg.includes("nexus"))

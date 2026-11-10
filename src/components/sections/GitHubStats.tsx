@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Github, Flame, GitFork, Users } from "lucide-react";
+import { Github, Flame, Star, Code2 } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionTag } from "@/components/ui/SectionTag";
+import { CODING_SINCE } from "@/data/profile";
 
 const GITHUB_USER = "Sithija-Kalhara";
 
@@ -32,6 +33,8 @@ type GitHubData = {
   followers: number;
   following: number;
   public_repos: number;
+  stars: number;
+  languages: number;
   topLangs: { lang: string; count: number }[];
   contributions: Contributions | null;
 };
@@ -247,7 +250,7 @@ export function GitHubStats() {
                       {data?.name || "Sithija Kalhara"}
                     </div>
                     <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-emerald-400">
-                      5+ yrs
+                      {new Date().getFullYear() - CODING_SINCE}+ yrs
                     </span>
                   </div>
                   <a
@@ -265,9 +268,9 @@ export function GitHubStats() {
 
               <div className="grid grid-cols-3 gap-3 border-t border-panel-border pt-4">
                 {[
-                  { icon: <Github size={14} />, label: "Repos", value: data ? data.public_repos : 12 },
-                  { icon: <Users size={14} />, label: "Followers", value: data ? data.followers : "—" },
-                  { icon: <GitFork size={14} />, label: "Following", value: data ? data.following : "—" },
+                  { icon: <Github size={14} />, label: "Repos", value: data ? data.public_repos : "—" },
+                  { icon: <Code2 size={14} />, label: "Languages", value: data ? data.languages : "—" },
+                  { icon: <Star size={14} />, label: "Stars", value: data ? data.stars : "—" },
                 ].map((s) => (
                   <div key={s.label} className="text-center">
                     <div className="flex justify-center text-signal-cyan">{s.icon}</div>

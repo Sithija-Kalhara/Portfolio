@@ -13,7 +13,10 @@ export const profile = {
   email: "sithijakalhara2@gmail.com",
   whatsapp: "+94712058956",
   whatsappLink: "https://wa.me/94712058956",
-  location: "Sri Lanka",
+  location: "Oyama, Japan",
+  origin: "Sri Lanka",
+  // Drop a PDF at public/resume.pdf and set this to "/resume.pdf" to show the Resume button.
+  resumeUrl: undefined as string | undefined,
 } as const;
 
 export const socials = [
@@ -64,25 +67,24 @@ export const socials = [
 export type TechItem = {
   name: string;
   category: "frontend" | "backend" | "tools";
-  level: number; // 0-100, used for the HUD meter
   icon: string;  // key into techIcons map
 };
 
 export const techStack: TechItem[] = [
-  { name: "React",       category: "frontend", level: 95, icon: "react"      },
-  { name: "Next.js",     category: "frontend", level: 95, icon: "nextjs"     },
-  { name: "Tailwind",    category: "frontend", level: 94, icon: "tailwind"   },
-  { name: "JavaScript",  category: "frontend", level: 96, icon: "javascript" },
-  { name: "TypeScript",  category: "frontend", level: 88, icon: "typescript" },
-  { name: "Three.js",    category: "frontend", level: 80, icon: "threejs"    },
-  { name: "Node.js",     category: "backend",  level: 90, icon: "nodejs"     },
-  { name: "Express.js",  category: "backend",  level: 87, icon: "express"    },
-  { name: "Python",      category: "backend",  level: 75, icon: "python"     },
-  { name: "MongoDB",     category: "backend",  level: 85, icon: "mongodb"    },
-  { name: "Git",         category: "tools",    level: 93, icon: "git"        },
-  { name: "GitHub",      category: "tools",    level: 93, icon: "github"     },
-  { name: "Docker",      category: "tools",    level: 78, icon: "docker"     },
-  { name: "Cloudflare",  category: "tools",    level: 82, icon: "cloudflare" },
+  { name: "React",       category: "frontend", icon: "react"      },
+  { name: "Next.js",     category: "frontend", icon: "nextjs"     },
+  { name: "Tailwind",    category: "frontend", icon: "tailwind"   },
+  { name: "JavaScript",  category: "frontend", icon: "javascript" },
+  { name: "TypeScript",  category: "frontend", icon: "typescript" },
+  { name: "Three.js",    category: "frontend", icon: "threejs"    },
+  { name: "Node.js",     category: "backend", icon: "nodejs"     },
+  { name: "Express.js",  category: "backend", icon: "express"    },
+  { name: "Python",      category: "backend", icon: "python"     },
+  { name: "MongoDB",     category: "backend", icon: "mongodb"    },
+  { name: "Git",         category: "tools", icon: "git"        },
+  { name: "GitHub",      category: "tools", icon: "github"     },
+  { name: "Docker",      category: "tools", icon: "docker"     },
+  { name: "Cloudflare",  category: "tools", icon: "cloudflare" },
 ];
 
 export const techCategories = [
@@ -133,11 +135,13 @@ export const focusAreas = [
   },
 ] as const;
 
+export const CODING_SINCE = 2019;
+
 export const stats = [
-  { value: "5+", label: "Core Technologies Mastered" },
-  { value: "Live", label: "On Twitch & YouTube" },
-  { value: "1", label: "Studio Founded — Eyerone" },
-  { value: "24/7", label: "Building & Shipping" },
+  { value: String(CODING_SINCE), label: "Writing code since" },
+  { value: "100%", label: "Eyerone built solo" },
+  { value: "3", label: "Live web platforms shipped" },
+  { value: "JP · LK", label: "Oyama-based, Sri Lankan roots" },
 ] as const;
 
 export const channelStats = [

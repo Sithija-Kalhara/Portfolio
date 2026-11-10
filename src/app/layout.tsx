@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    "Sithija Kalhara — Full-Stack Developer, Founder of Eyerone, AI Data Analyst, and Gaming Content Creator (Mr. Flexy). Based in Sri Lanka, specialising in React, Next.js, Node.js, Three.js, and scalable web platforms.",
+    "Sithija Kalhara — Full-Stack Developer, Founder of Eyerone, AI Data Analyst, and Gaming Content Creator (Mr. Flexy). Based in Oyama, Japan (from Sri Lanka), specialising in React, Next.js, Node.js, Three.js, and scalable web platforms.",
 
   keywords: [
     "Sithija Kalhara",
@@ -53,6 +53,9 @@ export const metadata: Metadata = {
     "Mr Flexy YouTube",
     "Eyerone founder",
     "React developer Sri Lanka",
+    "Full-Stack Developer Japan",
+    "Next.js developer Tochigi",
+    "Sithija Kalhara Japan",
   ],
 
   authors: [{ name: "Sithija Kalhara", url: BASE_URL }],
@@ -91,7 +94,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Sithija Kalhara | Full-Stack Developer & Game Streamer",
     description:
-      "Full-Stack Developer, Founder of Eyerone, AI Data Analyst, Gaming Content Creator (Mr. Flexy). Based in Sri Lanka.",
+      "Full-Stack Developer, Founder of Eyerone, AI Data Analyst, Gaming Content Creator (Mr. Flexy). Based in Japan.",
     images: [`${BASE_URL}/opengraph-image`],
     creator: "@sithijakalhara",
   },
